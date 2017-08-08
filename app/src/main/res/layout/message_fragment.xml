@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background_color"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/message_fragment_option1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/textview_selector"
+        android:clickable="true"
+        android:drawableLeft="@drawable/sys_msg"
+        android:drawablePadding="@dimen/space_15"
+        android:gravity="center_vertical"
+        android:padding="@dimen/space_15"
+        android:text="系统消息"
+        android:textColor="@color/text_color_gray"
+        android:textSize="@dimen/text_size_14" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/list_view_divider" />
+
+
+</LinearLayout>

@@ -1,0 +1,159 @@
+apply plugin: 'com.android.application'
+apply plugin: 'packer'
+
+
+packer {
+    /**渠道包**/
+    manifestMatcher = ['UMENG_CHANNEL', 'Promotion_Market']
+    archiveOutput = file(new File(project.rootProject.buildDir.path, "apks"))
+    archiveNameFormat = '${appPkg}-c-${buildType}-${buildTime}'
+
+    /**版本号自增**/
+    // 指定是否使用build版本号自增
+    buildNumberAuto = true
+    // 指定使用版本号自增的buildType，默认是全部
+    buildNumberTypeMatcher = ['release', 'debug']
+}
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.1'
+    sourceSets.main {
+        jniLibs.srcDirs = ['libs']
+    }
+    defaultConfig {
+        // Warning:Renderscript support mode is not currently supported with renderscript target 21+
+        renderscriptTargetApi 20
+        renderscriptSupportModeEnabled true
+
+        applicationId "com.e3lue.us"
+        minSdkVersion 17
+        targetSdkVersion 20
+        multiDexEnabled true
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
+        ndk {
+            //设置支持的SO库架构
+            abiFilters 'armeabi', 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
+    }
+    signingConfigs {
+        release {
+            keyAlias 'E3lueUs'
+            keyPassword 'passpass'
+            storeFile file('keystore/e3lue.jks')
+            storePassword 'passpass'
+        }
+        debug {
+            keyAlias 'E3lueUs'
+            keyPassword 'passpass'
+            storeFile file('keystore/e3lue.jks')
+            storePassword 'passpass'
+        }
+    }
+    buildTypes {
+        release {
+            //启用混淆
+            minifyEnabled true
+            //移除无用resource
+            //shrinkResources true
+            //zip优化
+            //zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //签名
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            debuggable true
+            signingConfig signingConfigs.release
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+//    sourceSets {
+//        main() {
+//            jniLibs.srcDirs = ['libs']
+//        }
+//    }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
+    }
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    packagingOptions {
+        exclude 'lib/armeabi-v7a/librsjni.so'
+        exclude 'lib/armeabi-v7a/libRSSupport.so'
+        exclude 'lib/mips/librsjni.so'
+        exclude 'lib/mips/libRSSupport.so'
+        exclude 'lib/x86/librsjni.so'
+        exclude 'lib/x86/libRSSupport.so'
+    }
+}
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    //OkGo
+    //    compile 'com.lzy.net:okserver:+'
+    //Bugly
+    //Photo
+    //Contact
+
+    //    compile 'com.github.nanchen2251:WaveSideBar:1.0.6'
+    compile project(':wavesidebar')
+    //tag
+    //alert
+    //pop
+    //tree
+    compile 'com.jakewharton:butterknife:8.5.1'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.alibaba:fastjson:1.1.34.android'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+    compile 'in.srain.cube:ultra-ptr:1.0.10'
+    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.lzy.net:okgo:+'
+    compile 'com.lzy.net:okrx:+'
+    compile 'com.lzy.widget:imagepicker:+'
+    compile 'com.lzy.widget:view-core:0.2.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'cn.woblog.android:downloader:1.0.1'
+    compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
+    compile 'com.tencent.bugly:nativecrashreport:latest.release'
+    compile 'com.bm.photoview:library:1.4.1'
+    compile 'com.github.nanchen2251:CompressHelper:1.0.2'
+    compile 'com.zhy:flowlayout-lib:1.0.3'
+    compile 'com.kyleduo.switchbutton:library:1.4.5'
+    compile 'com.bigkoo:alertview:1.0.3'
+    compile 'me.kareluo.ui:popmenu:1.1.0'
+    compile 'com.github.loonggg:BottomSheetPopupDialog:v1.0'
+    compile 'com.github.codbking:PickTime:v1.0.1'
+    compile 'com.kanade:treeadapter:0.1.3'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:multidex:1.0.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+}

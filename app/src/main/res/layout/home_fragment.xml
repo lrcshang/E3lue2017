@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@null"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadingEdge="none"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/layout_ent_gallery"
+                android:layout_width="fill_parent"
+                android:layout_height="160dp"
+                android:background="@color/white">
+
+                <com.e3lue.us.ui.loopviewpager.AutoLoopViewPager
+                    android:id="@+id/home_top_picture"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
+
+                <com.e3lue.us.ui.viewpagerindicator.CirclePageIndicator
+                    android:id="@+id/home_top_indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="5dp"
+                    android:padding="5dp" />
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:id="@+id/home_func_mana_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:padding="@dimen/space_5"
+                    android:text="管理功能" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.2dp"
+                    android:background="@color/gray_1" />
+
+                <com.e3lue.us.ui.view.LineScrollGridView_1
+                    android:id="@+id/home_func_mana"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:listSelector="@null"
+                    android:numColumns="4"
+                    android:scrollbars="none"
+                    android:stretchMode="columnWidth" />
+            </LinearLayout>
+
+            <View
+                android:layout_marginLeft="@dimen/space_5"
+                android:layout_width="match_parent"
+                android:layout_height="0.01px"
+                android:background="@color/gray_1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="@dimen/space_5"
+                android:text="  常用功能" />
+
+            <View
+                android:layout_marginLeft="@dimen/space_5"
+                android:layout_width="match_parent"
+                android:layout_height="0.01px"
+                android:background="@color/gray_1" />
+
+            <com.e3lue.us.ui.view.LineScrollGridView
+                android:id="@+id/home_func"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:listSelector="@null"
+                android:numColumns="4"
+                android:scrollbars="none"
+                android:stretchMode="columnWidth" />
+
+            <View
+                android:layout_marginLeft="@dimen/space_5"
+                android:layout_width="match_parent"
+                android:layout_height="0.01px"
+                android:background="@color/gray_1" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

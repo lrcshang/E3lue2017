@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_main_header" />
+
+    <EditText
+        android:id="@+id/diary_detail_message_content"
+        android:hint="留言内容"
+        android:layout_margin="@dimen/space_30"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/diary_detail_message_submit"
+        android:layout_width="fill_parent"
+        android:layout_height="50.0dip"
+        android:layout_margin="30dp"
+        android:background="@drawable/btn_orange"
+        android:clickable="true"
+        android:enabled="true"
+        android:text="保存"
+        android:textColor="#ffffffff"
+        android:textSize="18.0sp" />
+
+</LinearLayout>

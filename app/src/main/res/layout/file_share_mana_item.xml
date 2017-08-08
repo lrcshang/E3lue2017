@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/margin_med"
+    android:layout_marginRight="@dimen/margin_med"
+    android:layout_marginTop="@dimen/margin_med"
+    android:layout_marginBottom="@dimen/margin_min"
+    android:gravity="center"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/file_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/home_icon_other"
+        android:gravity="center"
+       />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_min"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/file_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="文件标题"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <com.e3lue.us.ui.view.NumberProgressBar
+            android:id="@+id/file_share_mana_pbprogress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:progress_reached_bar_height="1.5dp"
+            app:progress_reached_color="#3498DB"
+            app:progress_text_color="#3498DB"
+            app:progress_text_size="10sp"
+            app:progress_unreached_bar_height="0.75dp"
+            app:progress_unreached_color="#CCCCCC" />
+
+        <LinearLayout
+            android:id="@+id/line1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/file_person"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="上传人"
+                android:textColor="#303030" />
+
+            <TextView
+                android:id="@+id/file_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="   25.9M"
+                android:textColor="#303030" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/file_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2017-07-13T11:46:09"
+            android:textColor="@color/text_color_gray" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/delete"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_5"
+        android:src="@drawable/delete" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_height="match_parent">
+        <Button
+            android:gravity="center"
+            android:background="@drawable/shape_corner"
+            android:id="@+id/file_download"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_med"
+            android:text="下载" />
+    </LinearLayout>
+</LinearLayout>

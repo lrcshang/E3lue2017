@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_main_header" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/expenses_detail_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:choiceMode="singleChoice"
+                android:divider="@null"
+                android:fadingEdge="none"
+                android:listSelector="@android:color/transparent"
+                android:scrollbarStyle="outsideOverlay"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                app:spanCount="4"
+                tools:listitem="@layout/list_item_image" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_10"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="费用:"
+                    android:textColor="@color/text_color_gray" />
+
+                <EditText
+                    android:id="@+id/expenses_detail_amount_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/expenses_detail_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_10"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="说明:"
+                    android:textColor="@color/text_color_gray" />
+
+                <EditText
+                    android:id="@+id/expenses_detail_note_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/expenses_detail_note"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/expenses_detail_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_10"
+                android:hint="审核意见"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_10"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/expenses_detail_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_orange"
+                    android:clickable="true"
+                    android:enabled="true"
+                    android:text="修改"
+                    android:textColor="#ffffffff"
+                    android:textSize="14.0sp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/expenses_detail_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/space_10"
+                    android:background="@drawable/btn_orange"
+                    android:clickable="true"
+                    android:enabled="true"
+                    android:text="审核"
+                    android:textColor="#ffffffff"
+                    android:textSize="14.0sp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/expenses_detail_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/space_10"
+                    android:background="@drawable/btn_orange"
+                    android:clickable="true"
+                    android:enabled="true"
+                    android:text="退回"
+                    android:textColor="#ffffffff"
+                    android:textSize="14.0sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/gray_light"
+                android:gravity="center"
+                android:padding="@dimen/space_5"
+                android:text="审核记录"
+                android:textColor="@color/text_color_gray_light"
+                android:textSize="@dimen/text_size_12" />
+
+            <com.e3lue.us.ui.loadmore.LoadMoreListView
+                android:id="@+id/expenses_detail_tasks"
+                style="@style/CommonListViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_15" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

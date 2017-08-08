@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    xmlns:zhy="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_main_header" />
+
+    <com.zhy.view.flowlayout.TagFlowLayout
+        android:id="@+id/Expenses_Select"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        zhy:max_select="-1" />
+
+    <Button
+        android:id="@+id/Expenses_Select_ok"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space_5"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/btn_orange"
+        android:clickable="true"
+        android:enabled="true"
+        android:layout_gravity="center_horizontal"
+        android:text="选中"
+        android:textColor="#ffffffff"
+        android:textSize="18.0sp" />
+
+</LinearLayout>

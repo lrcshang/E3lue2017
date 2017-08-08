@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_main_header" />
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/newcheckin_mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:clickable="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:text="签到地点:" />
+
+        <TextView
+            android:id="@+id/newcheckin_addr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="备注:" />
+
+            <EditText
+                android:id="@+id/newcheckin_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:hint="非必填" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/newcheckin_takepicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/circle_button"
+        android:text="签到"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+    <com.e3lue.us.ui.view.NumberProgressBar
+        android:id="@+id/checkin_new_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:progress_reached_bar_height="1.5dp"
+        app:progress_reached_color="#3498DB"
+        app:progress_text_color="#3498DB"
+        app:progress_text_size="10sp"
+        app:progress_unreached_bar_height="0.75dp"
+        app:progress_unreached_color="#CCCCCC" />
+</LinearLayout>

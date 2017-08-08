@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.e3lue.us"
+    android:versionCode="7"
+    android:versionName="0.07">
+
+    <!-- Required -->
+    <permission
+        android:name="com.e3lue.us.permission.JPUSH_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <!-- Required  一些系统要求的权限，如访问网络等 -->
+    <uses-permission android:name="com.e3lue.us.permission.JPUSH_MESSAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- Optional for location -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 用于开启 debug 版本的应用在6.0 系统上 层叠窗口权限 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+    <!-- Baidu  -->
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- Camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+
+    <application
+        android:name=".common.AppContext"
+        android:allowBackup="true"
+        android:icon="@mipmap/logo"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="BUGLY_APP_VERSION"
+            android:value="1" />
+
+      <!--  <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>-->
+        <activity
+            android:name=".activity.SplashActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.CheckInNewActivity"
+            android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.CheckInListActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.CheckInDetailActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.ContactPersonAddActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.ContactPersonDetailActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.ContactPersonSelectActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.ExpensesNewActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.ExpensesMainActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.ExpensesDetailActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.ExpensesSelectActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.DiaryNewActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.DiaryListActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.DiaryDayActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.DiaryDetailActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.DiaryMessageAddActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.DiaryManaActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.GmMailBoxNewActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.SuggestionsNewActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.SuggestionListActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.SuggestionDetailActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.SettingActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.ChangePassWordActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.GameClubListActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.GameClubNewActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.GameClubOrderDetailActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.GameClubManaActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.GameClubMapActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.FileShareActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.SelectOrganizeActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name="com.lzy.imagepicker.ui.ImagePreviewDelActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.ImageViewerActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.WebViewerActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".activity.SystemMessageActivity"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"
+            android:theme="@android:style/Theme.Translucent" />
+
+        <receiver
+            android:name=".receiver.UpdateAppReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".service.HeartService"
+            android:enabled="true" />
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:permission="android.permission.BAIDU_LOCATION_SERVICE"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="com.baidu.location.service_v2.2" />
+            </intent-filter>
+        </service>
+        <service android:name="cn.woblog.android.downloader.DownloadService">
+            <intent-filter>
+                <action android:name="cn.woblog.android.downloader.DOWNLOAD_SERVICE" />
+            </intent-filter>
+        </service>
+        <service android:name=".service.UploadService" />
+        <!-- Rich push 核心功能 since 2.0.6 -->
+        <activity
+            android:name="cn.jpush.android.ui.PopWinActivity"
+            android:exported="false"
+            android:theme="@style/MyDialogStyle" />
+
+        <!-- Required SDK核心功能 -->
+        <activity
+            android:name="cn.jpush.android.ui.PushActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <action android:name="cn.jpush.android.ui.PushActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.e3lue.us" />
+            </intent-filter>
+        </activity>
+
+        <!-- Required SDK 核心功能 -->
+        <!-- 可配置android:process参数将PushService放在其他进程中 -->
+        <service
+            android:name="cn.jpush.android.service.PushService"
+            android:exported="false"
+            android:process=":mult">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTER" />
+                <action android:name="cn.jpush.android.intent.REPORT" />
+                <action android:name="cn.jpush.android.intent.PushService" />
+                <action android:name="cn.jpush.android.intent.PUSH_TIME" />
+            </intent-filter>
+        </service>
+
+        <!-- since 1.8.0 option 可选项。用于同一设备中不同应用的JPush服务相互拉起的功能。 -->
+        <!-- 若不启用该功能可删除该组件，将不拉起其他应用也不能被其他应用拉起 -->
+        <service
+            android:name="cn.jpush.android.service.DaemonService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.DaemonService" />
+
+                <category android:name="com.e3lue.us" />
+            </intent-filter>
+        </service>
+
+        <!-- Required SDK核心功能 -->
+        <receiver
+            android:name="cn.jpush.android.service.PushReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter android:priority="1000">
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" /> <!-- Required  显示通知栏 -->
+                <category android:name="com.e3lue.us" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+            <!-- Optional -->
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Required SDK核心功能 -->
+        <receiver
+            android:name="cn.jpush.android.service.AlarmReceiver"
+            android:exported="false" />
+
+        <!-- User defined.  For test only  用户自定义的广播接收器 -->
+        <receiver
+            android:name=".receiver.MyReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- 解锁完成后会调用 -->
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <!-- 监听情景切换 -->
+                <action android:name="android.media.RINGER_MODE_CHANGED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="cn.jpush.android.intent.REGISTRATION" /> <!-- Required  用户注册SDK的intent -->
+                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" /> <!-- Required  用户接收SDK消息的intent -->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" /> <!-- Required  用户接收SDK通知栏信息的intent -->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" /> <!-- Required  用户打开自定义通知栏的intent -->
+                <action android:name="cn.jpush.android.intent.CONNECTION" /> <!-- 接收网络变化 连接/断开 since 1.6.3 -->
+                <category android:name="com.e3lue.us" />
+            </intent-filter>
+        </receiver>
+        <!-- Required  . Enable it you can get statistics data with channel -->
+        <meta-data
+            android:name="JPUSH_CHANNEL"
+            android:value="developer-default" />
+        <meta-data
+            android:name="JPUSH_APPKEY"
+            android:value="567f1362b2b31f755d46fa08" /> <!-- </>值来自开发者平台取得的AppKey -->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="MvnD1rHbeSOmRnZczBiydyyoeerVZfAD" />
+
+        <activity android:name=".activity.BgchangeActivity" />
+    </application>
+
+</manifest>

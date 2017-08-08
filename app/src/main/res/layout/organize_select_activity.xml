@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_main_header" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/select_organize_listview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:padding="@dimen/space_10" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/organize_select_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/space_10"
+            android:gravity="center"
+            android:text="请选择" />
+
+        <Button
+            android:id="@+id/organzie_select_btn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_orange"
+            android:clickable="true"
+            android:enabled="true"
+            android:layout_gravity="center"
+            android:text="确定"
+            android:textColor="#ffffffff"
+            android:textSize="18.0sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,91 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:background="#90FFFFFF"
+    android:gravity="bottom|center_horizontal">
+
+    <TextView
+        android:id="@+id/more_window_local"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableTop="@drawable/tabbar_compose_lbs"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/more_window_item_margin"
+        android:text="签到" />
+
+    <TextView
+        android:id="@+id/more_window_namecard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_toRightOf="@+id/more_window_local"
+        android:clickable="true"
+        android:drawableTop="@drawable/tabbar_compose_camera"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/more_window_item_margin"
+        android:text="新联系人" />
+
+    <TextView
+        android:id="@+id/more_window_diary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/more_window_namecard"
+        android:clickable="true"
+        android:drawableTop="@drawable/tabbar_compose_review"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/more_window_item_margin"
+        android:text="写日记" />
+
+    <TextView
+        android:id="@+id/more_window_expend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/more_window_local"
+        android:layout_below="@+id/more_window_local"
+        android:clickable="true"
+        android:drawableTop="@drawable/tabbar_compose_idea"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/more_window_item_margin"
+        android:text="写报销" />
+
+    <TextView
+        android:id="@+id/more_window_manager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/more_window_namecard"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_toRightOf="@+id/more_window_expend"
+        android:clickable="true"
+        android:drawableTop="@drawable/tabbar_compose_photo"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/more_window_item_margin"
+        android:text="总经理信箱" />
+
+    <TextView
+        android:id="@+id/more_window_advise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/more_window_namecard"
+        android:layout_toRightOf="@+id/more_window_namecard"
+        android:clickable="true"
+        android:drawableTop="@drawable/tabbar_compose_more"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/more_window_item_margin"
+        android:text="建议&amp;协助" />
+
+    <ImageView
+        android:id="@+id/center_music_window_close"
+        android:layout_marginTop="70dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dip"
+        android:src="@drawable/ic_close"
+        android:layout_below="@+id/more_window_manager"
+        android:layout_alignStart="@+id/more_window_manager" />
+
+</RelativeLayout>

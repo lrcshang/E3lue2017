@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_margin="0.0dip"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:background="@drawable/home_func_bg"
+        android:paddingBottom="@dimen/space_12"
+        android:paddingLeft="@dimen/space_12"
+        android:paddingRight="@dimen/space_12">
+
+        <ImageView
+            android:id="@+id/home_func_image"
+            android:layout_width="38.0dip"
+            android:layout_height="38.0dip"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/space_10"
+            android:contentDescription="@string/app_name" />
+
+        <ImageView
+            android:id="@+id/error_icon"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/home_func_image"
+            android:layout_marginRight="-10dp"
+            android:src="@drawable/error_icon" />
+
+        <TextView
+            android:id="@+id/home_func_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/home_func_image"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5.0dip"
+            android:maxLines="1"
+            android:textColor="@color/text_color_black"
+            android:textSize="12.0sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_main_header" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:background="@color/white">
+
+        <com.e3lue.us.ui.loopviewpager.AutoLoopViewPager
+            android:id="@+id/contactperson_detail_pager"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <com.e3lue.us.ui.viewpagerindicator.CirclePageIndicator
+            android:id="@+id/contactperson_detail_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:padding="5dp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/background_color" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/contactperson_detail_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textColor="@color/text_color_black"
+            android:textSize="@dimen/text_size_20" />
+
+        <TextView
+            android:id="@+id/contactperson_detail_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="@dimen/space_10"
+            android:layout_toRightOf="@+id/contactperson_detail_name"
+            android:text="(协作部审核)"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_size_12" />
+
+        <TextView
+            android:id="@+id/contactperson_detail_company"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="@dimen/space_10"
+            android:layout_marginLeft="10dp"
+            android:text="深圳市宜博时尚科技有限公司"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_size_12" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/background_color" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_height="40dp">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/space_10"
+            android:background="@drawable/login_phone" />
+
+        <View
+            android:id="@+id/contactperson_detail_split"
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:background="@color/gray_light" />
+
+        <TextView
+            android:id="@+id/contactperson_detail_mobile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:text="13600000000"
+            android:textColor="@color/red"
+            android:textSize="@dimen/text_size_18" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/background_color" />
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:fadingEdge="none">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="拜访日记"
+                android:textColor="@color/gray" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

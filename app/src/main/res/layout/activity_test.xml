@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_main_header" />
+
+
+    <com.lzy.widget.ExpandGridView
+        android:id="@+id/test_gridview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:horizontalSpacing="3dp"
+        android:numColumns="2"
+        android:verticalSpacing="3dp" />
+
+    <Button
+        android:id="@+id/test_choose"
+        android:layout_width="fill_parent"
+        android:layout_height="40.0dip"
+        android:layout_marginLeft="18.0dip"
+        android:layout_marginRight="18.0dip"
+        android:layout_marginTop="30.0dip"
+        android:background="@drawable/btn_orange"
+        android:clickable="true"
+        android:enabled="true"
+        android:text="照片"
+        android:textColor="#ffffffff"
+        android:textSize="18.0sp" />
+
+    <Button
+        android:id="@+id/test_submit"
+        android:layout_width="fill_parent"
+        android:layout_height="40.0dip"
+        android:layout_marginLeft="18.0dip"
+        android:layout_marginRight="18.0dip"
+        android:layout_marginTop="30.0dip"
+        android:background="@drawable/btn_orange"
+        android:clickable="true"
+        android:enabled="true"
+        android:text="提交"
+        android:textColor="#ffffffff"
+        android:textSize="18.0sp" />
+
+</LinearLayout>

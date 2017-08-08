@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_header"
+    android:layout_width="match_parent"
+    android:layout_height="48dip"
+    android:background="@color/main_header_bg">
+
+    <!-- 返回按钮 -->
+
+    <Button
+        android:id="@+id/btnBack"
+        style="@style/title_base_button"
+        android:background="@drawable/btn_back_x"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textHeadTitle"
+        style="@style/main_head_title"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:maxWidth="180dp"
+        android:singleLine="true"
+        android:text="E3LUE"
+        android:textColor="@color/text_color_white"
+        android:textSize="@dimen/text_size_20" />
+<TextView
+    android:id="@+id/check_text"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:textColor="@color/white"
+    android:gravity="center_vertical"
+    android:paddingRight="15dp"
+    android:textSize="@dimen/text_size_17"
+    android:text="签到"
+    android:layout_below="@+id/btnBack"
+    android:layout_alignParentEnd="true" />
+    <ImageView
+        android:id="@+id/btnMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/space_10"
+        android:src="@drawable/menu_moreoverflow"
+        android:visibility="gone" />
+
+</RelativeLayout>

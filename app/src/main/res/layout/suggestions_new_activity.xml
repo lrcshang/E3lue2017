@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_main_header" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="温馨提示: 工作中碰到的任何问题，可以提交协助,由协作部指定相关人员处理。"
+                android:textColor="@color/gray"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/Suggestions_New_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:choiceMode="singleChoice"
+                android:divider="@null"
+                android:fadingEdge="none"
+                android:listSelector="@android:color/transparent"
+                android:scrollbarStyle="outsideOverlay"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                app:spanCount="4"
+                tools:listitem="@layout/list_item_image" />
+
+            <TextView
+                android:id="@+id/Suggestions_New_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_10"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:text="内容" />
+
+                <EditText
+                    android:id="@+id/Suggestions_New_info"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:hint="填写内容" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/Suggestions_New_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/circle_button"
+                android:text="提交"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <com.e3lue.us.ui.view.NumberProgressBar
+                android:id="@+id/suggestions_new_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:progress_reached_bar_height="1.5dp"
+                app:progress_reached_color="#3498DB"
+                app:progress_text_color="#3498DB"
+                app:progress_text_size="10sp"
+                app:progress_unreached_bar_height="0.75dp"
+                app:progress_unreached_color="#CCCCCC" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

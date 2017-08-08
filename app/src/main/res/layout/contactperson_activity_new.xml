@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_main_header" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/login_bg">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/contactperson_new_submit"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="470.0dip"
+                    android:layout_marginLeft="18.0dip"
+                    android:layout_marginRight="18.0dip"
+                    android:background="@drawable/login_rect_white">
+
+                    <RelativeLayout
+                        android:id="@+id/contactperson_layoutsex"
+                        android:layout_width="fill_parent"
+                        android:layout_height="45.0dip">
+
+                        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:id="@+id/contactperson_sex_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/contactperson_new_man"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="19dp"
+                                android:checked="true"
+                                android:text="男" />
+
+                            <RadioButton
+                                android:id="@+id/contactperson_sex_feman"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="19dp"
+                                android:layout_toEndOf="@+id/contactperson_sex_man"
+                                android:text="女" />
+                        </RadioGroup>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/contactperson_layoutname"
+                        android:layout_width="fill_parent"
+                        android:layout_height="45.0dip"
+                        android:layout_below="@+id/contactperson_layoutsex">
+
+                        <ImageView
+                            android:id="@+id/contactperson_imgName"
+                            android:layout_width="15.0dip"
+                            android:layout_height="18.0dip"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10.0dip"
+                            android:background="@drawable/widget_bar_user_normal" />
+
+                        <EditText
+                            android:id="@+id/contactperson_new_name"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_toRightOf="@+id/contactperson_imgName"
+                            android:background="@null"
+                            android:hint="(必填)姓名"
+                            android:inputType="text"
+                            android:maxLength="11"
+                            android:paddingLeft="15.0dip"
+                            android:singleLine="true"
+                            android:textColor="#ff111111"
+                            android:textColorHint="#ffaaaaaa"
+                            android:textSize="16.0sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/contactperson_layoutphone"
+                        android:layout_width="fill_parent"
+                        android:layout_height="45.0dip"
+                        android:layout_below="@+id/contactperson_layoutname">
+
+                        <ImageView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0.5dip"
+                            android:background="#ffdddddd" />
+
+                        <ImageView
+                            android:id="@+id/contactperson_imgPhone"
+                            android:layout_width="15.0dip"
+                            android:layout_height="18.0dip"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10.0dip"
+                            android:background="@drawable/login_phone" />
+
+                        <EditText
+                            android:id="@+id/contactperson_new_mobile"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_toRightOf="@+id/contactperson_imgPhone"
+                            android:background="@null"
+                            android:hint="(必填)手机号"
+                            android:inputType="number"
+                            android:maxLength="11"
+                            android:paddingLeft="15.0dip"
+                            android:singleLine="true"
+                            android:textColor="#ff111111"
+                            android:textColorHint="#ffaaaaaa"
+                            android:textSize="16.0sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/contactperson_layoutweixin"
+                        android:layout_width="fill_parent"
+                        android:layout_height="45.0dip"
+                        android:layout_below="@+id/contactperson_layoutphone">
+
+                        <ImageView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0.5dip"
+                            android:background="#ffdddddd" />
+
+                        <ImageView
+                            android:id="@+id/contactperson_imgweixin"
+                            android:layout_width="15.0dip"
+                            android:layout_height="18.0dip"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10.0dip"
+                            android:background="@drawable/circle_collect_unnormal" />
+
+                        <EditText
+                            android:id="@+id/contactperson_new_weixin"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_toRightOf="@+id/contactperson_imgweixin"
+                            android:background="@null"
+                            android:hint="(选填)微信号"
+                            android:inputType="text"
+                            android:paddingLeft="15.0dip"
+                            android:singleLine="true"
+                            android:textColor="#ff111111"
+                            android:textColorHint="#ffaaaaaa"
+                            android:textSize="16.0sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/contactperson_layoutqq"
+                        android:layout_width="fill_parent"
+                        android:layout_height="45.0dip"
+                        android:layout_below="@+id/contactperson_layoutweixin">
+
+                        <ImageView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0.5dip"
+                            android:background="#ffdddddd" />
+
+                        <ImageView
+                            android:id="@+id/contactperson_imgqq"
+                            android:layout_width="15.0dip"
+                            android:layout_height="18.0dip"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10.0dip"
+                            android:background="@drawable/circle_collect_unnormal" />
+
+                        <EditText
+                            android:id="@+id/contactperson_new_qq"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_toRightOf="@+id/contactperson_imgqq"
+                            android:background="@null"
+                            android:hint="(选填)QQ号"
+                            android:inputType="number"
+                            android:paddingLeft="15.0dip"
+                            android:singleLine="true"
+                            android:textColor="#ff111111"
+                            android:textColorHint="#ffaaaaaa"
+                            android:textSize="16.0sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/contactperson_layoutnote"
+                        android:layout_width="fill_parent"
+                        android:layout_height="45.0dip"
+                        android:layout_below="@+id/contactperson_layoutqq">
+
+                        <ImageView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0.5dip"
+                            android:background="#ffdddddd" />
+
+                        <ImageView
+                            android:id="@+id/contactperson_imgnote"
+                            android:layout_width="15.0dip"
+                            android:layout_height="18.0dip"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10.0dip"
+                            android:background="@drawable/circle_collect_unnormal" />
+
+                        <EditText
+                            android:id="@+id/contactperson_new_note"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_toRightOf="@+id/contactperson_imgnote"
+                            android:background="@null"
+                            android:hint="(选填)备注"
+                            android:inputType="text"
+                            android:paddingLeft="15.0dip"
+                            android:singleLine="true"
+                            android:textColor="#ff111111"
+                            android:textColorHint="#ffaaaaaa"
+                            android:textSize="16.0sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/contactperson_layoutcard1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="100.0dip"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/contactperson_layoutnote">
+
+                        <ImageView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0.5dip"
+                            android:background="#ffdddddd" />
+
+                        <TextView
+                            android:id="@+id/contactperson_txt1"
+                            android:layout_width="15.0dip"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10.0dip"
+                            android:gravity="center_vertical"
+                            android:text="名片正面"
+                            android:textColor="@color/gray" />
+
+                        <ImageView
+                            android:id="@+id/contactperson_new_card_one"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10.0dip"
+                            android:layout_toEndOf="@+id/contactperson_txt1"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/image_add_nor"
+                            android:clickable="true"
+                            android:maxHeight="200dp"
+                            android:maxWidth="500dp"
+                            android:scaleType="fitXY" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="100.0dip"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/contactperson_layoutcard1">
+
+                        <ImageView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0.5dip"
+                            android:background="#ffdddddd" />
+
+                        <TextView
+                            android:id="@+id/contactperson_txt2"
+                            android:layout_width="15.0dip"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10.0dip"
+                            android:gravity="center_vertical"
+                            android:text="名片反面"
+                            android:textColor="@color/gray" />
+
+                        <ImageView
+                            android:id="@+id/contactperson_new_card_two"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10.0dip"
+                            android:layout_toEndOf="@+id/contactperson_txt2"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/image_add_nor"
+                            android:clickable="true"
+                            android:maxHeight="200dp"
+                            android:maxWidth="500dp"
+                            android:scaleType="fitXY" />
+                    </RelativeLayout>
+
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/contactperson_new_submit"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20.0dip"
+            android:layout_marginLeft="18.0dip"
+            android:layout_marginRight="18.0dip"
+            android:layout_marginTop="20.0dip"
+            android:background="@drawable/btn_orange"
+            android:clickable="true"
+            android:enabled="true"
+            android:text="提交资料"
+            android:textColor="#ffffffff"
+            android:textSize="18.0sp" />
+
+        <com.e3lue.us.ui.view.NumberProgressBar
+            android:id="@+id/contactperson_new_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
+            app:progress_reached_bar_height="1.5dp"
+            app:progress_reached_color="#3498DB"
+            app:progress_text_color="#3498DB"
+            app:progress_text_size="10sp"
+            app:progress_unreached_bar_height="0.75dp"
+            app:progress_unreached_color="#CCCCCC" />
+    </RelativeLayout>
+</LinearLayout>

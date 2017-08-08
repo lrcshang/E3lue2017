@@ -1,0 +1,3 @@
+D:/AsProjects/E3lue2017/app/.externalNativeBuild/cmake/debug/armeabi/CMakeFiles/native-lib.dir
+D:/AsProjects/E3lue2017/app/.externalNativeBuild/cmake/debug/armeabi/CMakeFiles/edit_cache.dir
+D:/AsProjects/E3lue2017/app/.externalNativeBuild/cmake/debug/armeabi/CMakeFiles/rebuild_cache.dir
