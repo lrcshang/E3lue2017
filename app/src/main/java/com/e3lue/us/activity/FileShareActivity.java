@@ -5,6 +5,7 @@ import android.os.Message;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,7 @@ import butterknife.ButterKnife;
  * Created by Leo on 2017/6/23.
  */
 
-public class FileShareActivity extends SwipeBackActivity  {
+public class FileShareActivity extends SwipeBackActivity {
 
     @BindView(R.id.btnBack)
     Button btnBack;
@@ -42,7 +44,8 @@ public class FileShareActivity extends SwipeBackActivity  {
 
     @BindView(R.id.file_share_list)
     RecyclerView list;
-
+    @BindView(R.id.alldownoad)
+    TextView alldownoad;
     private DownloadAdapter adapter;
     List<FileShare> filelists;
     CheckFile checkFile;//检查本地是否存在类
@@ -61,17 +64,29 @@ public class FileShareActivity extends SwipeBackActivity  {
                 finish();
             }
         });
+
+        alldownoad.setText("下载");
         filelists = new ArrayList<>();
         adapter = new DownloadAdapter(FileShareActivity.this, filelists);
-        getData();
+        alldownoad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                for (int i = 0; i < list.getChildCount(); i++) {
+                    adapter.vh.downAllFile();
+//                }
+
+            }
+        });
+        getData(HttpUrl.Url.FileShareList);
+        getData(HttpUrl.Url.FileShareLists);
         checkFile = new CheckFile(FileShareActivity.this);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         list.setAdapter(adapter);
     }
 
-    public void getData() {
-        OkGo.<String>post(HttpUrl.Url.FileShareList)
+    public void getData(final String URL) {
+        OkGo.<String>post(URL)
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
@@ -79,8 +94,11 @@ public class FileShareActivity extends SwipeBackActivity  {
                         JsonResult r = HttpClient.GetResult(response.body());
                         if (r.getRet() == 0 && r.getData() != null) {
 //                            List<FileShare> list
-                            filelists = JSONArray.parseArray(r.getData().toString(), FileShare.class);
-                            adapter.setFilelists(filelists);
+
+                            if (URL.equals(HttpUrl.Url.FileShareList)) {
+                                filelists = JSONArray.parseArray(r.getData().toString(), FileShare.class);
+                                adapter.setFilelists(filelists);
+                            } else Log.i("xinxi", r.getData().toString());
                         }
                     }
 
@@ -97,6 +115,7 @@ public class FileShareActivity extends SwipeBackActivity  {
         super.onDestroy();
         adapter.unRegister();
     }
+
     @Override
     protected void onResume() {
         super.onResume();

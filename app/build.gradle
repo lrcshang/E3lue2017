@@ -30,6 +30,8 @@ android {
         minSdkVersion 17
         targetSdkVersion 20
         multiDexEnabled true
+        versionCode 8
+        versionName "1.0"
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -57,7 +59,7 @@ android {
     buildTypes {
         release {
             //启用混淆
-            minifyEnabled true
+            minifyEnabled false
             //移除无用resource
             //shrinkResources true
             //zip优化

@@ -3,3 +3,5 @@
 935	1110	0	../../../../build/intermediates/cmake/debug/obj/armeabi/libnative-lib.so	30c98615bf74bfe6
 4	3140	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	8c9cf79262ef47c3
 3140	4189	0	../../../../build/intermediates/cmake/debug/obj/armeabi/libnative-lib.so	30c98615bf74bfe6
+1	855	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	8c9cf79262ef47c3
+855	1022	0	../../../../build/intermediates/cmake/debug/obj/armeabi/libnative-lib.so	30c98615bf74bfe6

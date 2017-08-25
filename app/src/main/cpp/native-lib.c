@@ -7,8 +7,19 @@ __FBSDID("$FreeBSD: src/usr.bin/bsdiff/bsdiff/bsdiff.c,v 1.1 2005/08/06 01:59:05
 #include <bzlib.h>
 #include <err.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <string.h>
 /** 导入bzip2的引用*/
 #include "include/bzlib.c"
+#include "include/crctable.c"
+#include "include/compress.c"
+#include "include/decompress.c"
+#include "include/randtable.c"
+#include "include/blocksort.c"
+#include "include/huffman.c"
 #include "DiffUtils.h"
 #include "PatchUtils.h"
 #define MIN(x,y) (((x)<(y)) ? (x) : (y))

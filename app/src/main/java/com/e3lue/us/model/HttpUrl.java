@@ -74,8 +74,9 @@ public class HttpUrl {
         public static final String SuggestionsGet = BASIC + "/Controller.aspx?controller=SuggestionsController&method=Get";
 
         //FileShare
+        //ShareFiless
         public static final String FileShareList = BASIC + "/Controller.aspx?controller=FileShareController&method=List";
-
+        public static final String FileShareLists = BASIC + "/Controller.aspx?controller=FileShareController&method=ShareFiles";
         //workflow
         public static final String WORKTASKLIST = BASIC + "/Controller.aspx?controller=WorkFlowTaskController&method=GetTaskList";
         public static final String WORKFLOWSTEP = BASIC + "/Controller.aspx?controller=WorkFlowTaskController&method=GetFlowSteps";

@@ -71,7 +71,7 @@
             android:name="BUGLY_APP_VERSION"
             android:value="1" />
 
-      <!--  <activity android:name=".MainActivity">
+       <!-- <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
