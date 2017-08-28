@@ -1,10 +1,10 @@
 
 {
-	"buildFiles" : [ "D:/AsProjects/E3lue2017/app/CMakeLists.txt" ],
+	"buildFiles" : [ "D:/Asworkspace/E3lue2017/app/CMakeLists.txt" ],
 	"cFileExtensions" : [ "c" ],
 	"cleanCommands" : 
 	[
-		"D:\\Androidstudio\\sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\AsProjects\\E3lue2017\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target clean"
+		"D:\\Androidstudio\\sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\Asworkspace\\E3lue2017\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target clean"
 	],
 	"libraries" : 
 	{
@@ -12,27 +12,27 @@
 		{
 			"abi" : "arm64-v8a",
 			"artifactName" : "native-lib",
-			"buildCommand" : "D:\\Androidstudio\\sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\AsProjects\\E3lue2017\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target native-lib",
+			"buildCommand" : "D:\\Androidstudio\\sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\Asworkspace\\E3lue2017\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target native-lib",
 			"buildType" : "debug",
 			"files" : 
 			[
 				
 				{
-					"flags" : "  -target aarch64-none-linux-android -gcc-toolchain D:/AndroidStudio/android-ndk-r13/toolchains/aarch64-linux-android-4.9/prebuilt/windows-x86_64 --sysroot=D:/AndroidStudio/android-ndk-r13/platforms/android-21/arch-arm64 -Dnative_lib_EXPORTS -I..\\..\\..\\..\\src\\main\\cpp\\include  -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info -O0 -fno-limit-debug-info  -fPIC      -c ",
-					"src" : "D:/AsProjects/E3lue2017/app/src/main/cpp/native-lib.c",
-					"workingDirectory" : "D:/AsProjects/E3lue2017/app/.externalNativeBuild/cmake/debug/arm64-v8a"
+					"flags" : "  -target aarch64-none-linux-android -gcc-toolchain D:/Androidstudio/android-ndk-r13/toolchains/aarch64-linux-android-4.9/prebuilt/windows-x86_64 --sysroot=D:/Androidstudio/android-ndk-r13/platforms/android-21/arch-arm64 -Dnative_lib_EXPORTS -I..\\..\\..\\..\\src\\main\\cpp\\include  -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info -O0 -fno-limit-debug-info  -fPIC      -c ",
+					"src" : "D:/Asworkspace/E3lue2017/app/src/main/cpp/native-lib.c",
+					"workingDirectory" : "D:/Asworkspace/E3lue2017/app/.externalNativeBuild/cmake/debug/arm64-v8a"
 				}
 			],
-			"output" : "D:/AsProjects/E3lue2017/app/build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so",
-			"toolchain" : "3735558857"
+			"output" : "D:/Asworkspace/E3lue2017/app/build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so",
+			"toolchain" : "3679442633"
 		}
 	},
 	"toolchains" : 
 	{
-		"3735558857" : 
+		"3679442633" : 
 		{
-			"cCompilerExecutable" : "D:/AndroidStudio/android-ndk-r13/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
-			"cppCompilerExecutable" : "D:/AndroidStudio/android-ndk-r13/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
+			"cCompilerExecutable" : "D:/Androidstudio/android-ndk-r13/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+			"cppCompilerExecutable" : "D:/Androidstudio/android-ndk-r13/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
 		}
 	}
 }

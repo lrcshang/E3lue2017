@@ -1,15 +1,3 @@
 # ninja log v5
-0	511	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-512	702	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	76f6d5865c945d7e
-2	1119	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-2	274	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-2	178	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-2	165	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-3	418	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-419	693	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	76f6d5865c945d7e
-21	411	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-2	359	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-4	247	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-1	265	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-2	877	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	16abd6c778421538
-877	953	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	76f6d5865c945d7e
+1	393	0	CMakeFiles/native-lib.dir/src/main/cpp/native-lib.c.o	ec402acec8cfaffb
+394	513	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	8aa8a09be668ad5f

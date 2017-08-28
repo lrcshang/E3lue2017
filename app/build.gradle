@@ -127,6 +127,7 @@ dependencies {
     //alert
     //pop
     //tree
+    compile 'org.wlf:FileDownloader:0.3.2'
     compile 'com.jakewharton:butterknife:8.5.1'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -141,7 +142,6 @@ dependencies {
     compile 'com.lzy.widget:imagepicker:+'
     compile 'com.lzy.widget:view-core:0.2.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'cn.woblog.android:downloader:1.0.1'
     compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
     compile 'com.tencent.bugly:nativecrashreport:latest.release'
     compile 'com.bm.photoview:library:1.4.1'

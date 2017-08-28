@@ -1,14 +1,14 @@
 Executable : D:\Androidstudio\sdk\cmake\3.6.4111459\bin\cmake.exe
 arguments : 
--HD:\AsProjects\E3lue2017\app
--BD:\AsProjects\E3lue2017\app\.externalNativeBuild\cmake\debug\arm64-v8a
+-HD:\Asworkspace\E3lue2017\app
+-BD:\Asworkspace\E3lue2017\app\.externalNativeBuild\cmake\debug\arm64-v8a
 -GAndroid Gradle - Ninja
 -DANDROID_ABI=arm64-v8a
--DANDROID_NDK=D:\AndroidStudio\android-ndk-r13
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\AsProjects\E3lue2017\app\build\intermediates\cmake\debug\obj\arm64-v8a
+-DANDROID_NDK=D:\Androidstudio\android-ndk-r13
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\Asworkspace\E3lue2017\app\build\intermediates\cmake\debug\obj\arm64-v8a
 -DCMAKE_BUILD_TYPE=Debug
 -DCMAKE_MAKE_PROGRAM=D:\Androidstudio\sdk\cmake\3.6.4111459\bin\ninja.exe
--DCMAKE_TOOLCHAIN_FILE=D:\AndroidStudio\android-ndk-r13\build\cmake\android.toolchain.cmake
+-DCMAKE_TOOLCHAIN_FILE=D:\Androidstudio\android-ndk-r13\build\cmake\android.toolchain.cmake
 -DANDROID_PLATFORM=android-21
 -DCMAKE_CXX_FLAGS=
 jvmArgs : 

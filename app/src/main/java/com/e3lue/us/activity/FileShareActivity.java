@@ -15,6 +15,7 @@ import com.e3lue.us.R;
 import com.e3lue.us.adapter.DownloadAdapter;
 import com.e3lue.us.http.HttpClient;
 import com.e3lue.us.model.FileShare;
+import com.e3lue.us.model.FileShares;
 import com.e3lue.us.model.HttpUrl;
 import com.e3lue.us.model.JsonResult;
 import com.e3lue.us.ui.swipebacklayout.SwipeBackActivity;
@@ -24,6 +25,8 @@ import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
+
+import org.wlf.filedownloader.FileDownloader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +51,7 @@ public class FileShareActivity extends SwipeBackActivity {
     TextView alldownoad;
     private DownloadAdapter adapter;
     List<FileShare> filelists;
+    List<FileShares> fileRes;
     CheckFile checkFile;//检查本地是否存在类
 
     @Override
@@ -55,7 +59,6 @@ public class FileShareActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_share_activity);
         ButterKnife.bind(this);
-
         textHeadTitle.setText("文件共享资源");
         btnBack.setVisibility(View.VISIBLE);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -67,12 +70,13 @@ public class FileShareActivity extends SwipeBackActivity {
 
         alldownoad.setText("下载");
         filelists = new ArrayList<>();
+        fileRes = new ArrayList<>();
         adapter = new DownloadAdapter(FileShareActivity.this, filelists);
         alldownoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                for (int i = 0; i < list.getChildCount(); i++) {
-                    adapter.vh.downAllFile();
+                adapter.vh.downAllFile();
 //                }
 
             }
@@ -83,6 +87,7 @@ public class FileShareActivity extends SwipeBackActivity {
         list.setLayoutManager(new LinearLayoutManager(this));
         list.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         list.setAdapter(adapter);
+        FileDownloader.registerDownloadStatusListener(adapter);
     }
 
     public void getData(final String URL) {
@@ -98,7 +103,11 @@ public class FileShareActivity extends SwipeBackActivity {
                             if (URL.equals(HttpUrl.Url.FileShareList)) {
                                 filelists = JSONArray.parseArray(r.getData().toString(), FileShare.class);
                                 adapter.setFilelists(filelists);
-                            } else Log.i("xinxi", r.getData().toString());
+                            } else {
+                                fileRes = JSONArray.parseArray(r.getData().toString(), FileShares.class);
+                                Log.i("xinxi",r.getData().toString());
+                                adapter.setFileRes(fileRes);
+                            }
                         }
                     }
 
@@ -114,6 +123,7 @@ public class FileShareActivity extends SwipeBackActivity {
     protected void onDestroy() {
         super.onDestroy();
         adapter.unRegister();
+        FileDownloader.unregisterDownloadStatusListener(adapter);
     }
 
     @Override

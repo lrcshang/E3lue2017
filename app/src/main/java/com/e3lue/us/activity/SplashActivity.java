@@ -24,9 +24,6 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 
-import cn.woblog.android.downloader.DownloadService;
-import cn.woblog.android.downloader.config.Config;
-
 /**
  * Created by e3lue on 15/7/29.
  */
@@ -47,7 +44,6 @@ public class SplashActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        init();
         final boolean firstTimeUse = SharedPreferences.getInstance().getBoolean("first-time-use", true);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -63,32 +59,6 @@ public class SplashActivity extends FragmentActivity {
                 }
             }
         }, 3000);
-    }
-
-    private void init() {
-        try {
-            //custom download database.
-//      DBController dbController = DBController.getInstance(getApplicationContext());
-            Config config = new Config();
-            //set database path.
-//    config.setDatabaseName("/sdcard/a/d.db");
-//      config.setDownloadDBController(dbController);
-
-            //set download quantity at the same time.
-            config.setDownloadThread(3);
-
-            //set each download info thread number
-            config.setEachDownloadThread(2);
-
-            // set connect timeout,unit millisecond
-            config.setConnectTimeout(10000);
-
-            // set read data timeout,unit millisecond
-            config.setReadTimeout(10000);
-            DownloadService.getDownloadManager(this.getApplicationContext(), config);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void initGuideGallery() {
