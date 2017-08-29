@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSONArray;
 import com.e3lue.us.R;
 import com.e3lue.us.adapter.DownloadAdapter;
+import com.e3lue.us.adapter.DownloadAdapter_1;
 import com.e3lue.us.http.HttpClient;
 import com.e3lue.us.model.FileShare;
 import com.e3lue.us.model.FileShares;
@@ -49,7 +50,7 @@ public class FileShareActivity extends SwipeBackActivity {
     RecyclerView list;
     @BindView(R.id.alldownoad)
     TextView alldownoad;
-    private DownloadAdapter adapter;
+    private DownloadAdapter_1 adapter;
     List<FileShare> filelists;
     List<FileShares> fileRes;
     CheckFile checkFile;//检查本地是否存在类
@@ -71,7 +72,7 @@ public class FileShareActivity extends SwipeBackActivity {
         alldownoad.setText("下载");
         filelists = new ArrayList<>();
         fileRes = new ArrayList<>();
-        adapter = new DownloadAdapter(FileShareActivity.this, filelists);
+        adapter = new DownloadAdapter_1(FileShareActivity.this);
         alldownoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,7 +107,7 @@ public class FileShareActivity extends SwipeBackActivity {
                             } else {
                                 Log.i("xinxi",r.getData().toString());
                                 fileRes = JSONArray.parseArray(r.getData().toString(), FileShares.class);
-                                adapter.setFileRes(fileRes);
+                                adapter.setFileRess(fileRes);
                             }
                         }
                     }

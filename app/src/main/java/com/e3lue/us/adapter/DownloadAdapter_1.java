@@ -45,11 +45,10 @@ import butterknife.OnClick;
  */
 
 public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.ViewHolder> implements OnRetryableFileDownloadStatusListener {
-//    List<FileShare> filelists;
-    List<FileShares> fileRes;
+    List<FileShares> fileRess = new ArrayList<>();
     private LayoutInflater inflater;
     private Context context;
-//    FileShare fileShare;
+    FileShares fileShare;
     List<Integer> isvis = new ArrayList<>();
     List<Integer> isvis1 = new ArrayList<>();
     List<String> down = new ArrayList<>();
@@ -112,9 +111,24 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         }
     };
 
+    public void setFileRess(List<FileShares> fileRess) {
+        for (int i = 0; i < fileRess.size(); i++) {
+            if (fileRess.get(i).getPId() == 0) {
+                fileRes.add(fileRess.get(i));
+                isvis.add(i, View.GONE);
+                isvis1.add(i, View.VISIBLE);
+                progress.add(0);
+                down.add(i, "下载");
+            }
+        }
+        setFileRes(fileRes);
+        this.fileRess = fileRess;
+    }
+
     public void setFileRes(List<FileShares> fileRes) {
-        Log.i("xinxi",fileRes.size()+fileRes.get(1).getPath());
+        Log.i("xinxi", fileRes.size() + "");
         this.fileRes = fileRes;
+        notifyDataSetChanged();
     }
 
     private Boolean isExist(int position) {
@@ -146,12 +160,12 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 
     public void setFilelists(List<FileShare> filelists) {
 //        this.filelists = filelists;
-        for (int i = 0; i < filelists.size(); i++) {
-            isvis.add(i, View.GONE);
-            isvis1.add(i, View.VISIBLE);
-            progress.add(0);
-            down.add(i, "下载");
-        }
+//        for (int i = 0; i < filelists.size(); i++) {
+//            isvis.add(i, View.GONE);
+//            isvis1.add(i, View.VISIBLE);
+//            progress.add(0);
+//            down.add(i, "下载");
+//        }
         notifyDataSetChanged();
     }
 
@@ -170,12 +184,14 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-//        fileShare = filelists.get(position);
-//        holder.setFileShare(fileShare);
+        fileShare = fileRes.get(position);
+        holder.setFileShare(fileShare);
         holder.bind(position);
         holder.download.setTag(position);
         holder.delete.setTag(position);
     }
+
+    List<FileShares> fileRes = new ArrayList<>();
 
     @Override
     public int getItemCount() {
@@ -202,7 +218,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         LinearLayout linearLayout;
         @BindView(R.id.delete)
         ImageView delete;
-        FileShare fileShare;
+        FileShares fileShare;
         private String SDcardDir = Environment.getExternalStorageDirectory().toString() + "/e3lue/";
 
         public ViewHolder(View view) {
@@ -211,105 +227,41 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             ButterKnife.bind(this, itemView);
         }
 
-        public void bindData(int position) {
-            if (mDownloadFileInfos.size() <= 0)
-                return;
-            for (int i = 0; i < mDownloadFileInfos.size(); i++) {
-                if (mDownloadFileInfos.get(i).getFileName().equals(fileShare.getFileName())) {
-                    // download progress
-                    Message msg = new Message();
-//                    msg.what = 0x01;
-//                    msg.obj = position;
-//                    handler.sendMessage(msg);
-                    int totalSize = (int) mDownloadFileInfos.get(i).getFileSizeLong();
-                    int downloaded = (int) mDownloadFileInfos.get(i).getDownloadedSizeLong();
-                    double rate = (double) totalSize / Integer.MAX_VALUE;
-                    if (rate > 1.0) {
-                        totalSize = Integer.MAX_VALUE;
-                        downloaded = (int) (downloaded / rate);
-                    }
-                    pbProgress.setProgress((int) (downloaded / totalSize * 100.0));
-                    switch (mDownloadFileInfos.get(i).getStatus()) {
-                        // download file status:unknown
-                        case Status.DOWNLOAD_STATUS_UNKNOWN:
-//                            tvText.setText(context.getString(R.string.main__can_not_download));
-                            break;
-                        // download file status:retrying
-                        case Status.DOWNLOAD_STATUS_RETRYING:
-//                            tvText.setText(context.getString(R.string.main__retrying_connect_resource));
-                            break;
-                        // download file status:preparing
-                        case Status.DOWNLOAD_STATUS_PREPARING:
-//                            tvText.setText(context.getString(R.string.main__getting_resource));
-                            break;
-                        // download file status:prepared
-                        case Status.DOWNLOAD_STATUS_PREPARED:
-
-                            break;
-                        // download file status:paused
-                        case Status.DOWNLOAD_STATUS_PAUSED:
-                            msg.what = 0x02;
-                            msg.obj = position;
-                            handler.sendMessage(msg);
-                            break;
-                        // download file status:downloading
-                        case Status.DOWNLOAD_STATUS_DOWNLOADING:
-                            msg.what = 0x03;
-                            msg.obj = position;
-                            handler.sendMessage(msg);
-                            break;
-                        // download file status:error
-                        case Status.DOWNLOAD_STATUS_ERROR:
-                            break;
-                        // download file status:waiting
-                        case Status.DOWNLOAD_STATUS_WAITING:
-                            msg.what = 0x04;
-                            msg.obj = position;
-                            handler.sendMessage(msg);
-                            break;
-                        // download file status:completed
-                        case Status.DOWNLOAD_STATUS_COMPLETED:
-                            msg.what = 0x05;
-                            msg.obj = position;
-                            handler.sendMessage(msg);
-                            break;
-                        // download file status:file not exist
-                        case Status.DOWNLOAD_STATUS_FILE_NOT_EXIST:
-                            break;
-                    }
-                }
-            }
-
-        }
-
+        /**
+         * String t = filelists.get(pos).getDateStr().substring(0, 4) + "/" + filelists.get(pos).getDateStr();
+         * String url = HttpUrl.Url.BASIC + "/userfiles/fileshare/" + 1PPT + "/" + 324公司简介20170704.pdf;
+         */
         public void bind(int position) {
-            filetitle.setText(fileShare.getFileTitle());
-            fileperson.setText(fileShare.getDocumentMaker());
-            filedate.setText(fileShare.getCreateDate().substring(0, fileShare.getCreateDate().indexOf("T")));
-            if (FileUtil.getMIMEtype(fileShare.getFileName()).startsWith("audio/")) {
+            filetitle.setText(fileShare.getPath());
+//            fileperson.setText(fileShare.getDocumentMaker());
+//            filedate.setText(fileShare.getCreateDate().substring(0, fileShare.getCreateDate().indexOf("T")));
+            if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("audio/")) {
                 filetype.setImageResource(R.drawable.home_icon_music);
-            } else if (FileUtil.getMIMEtype(fileShare.getFileName()).startsWith("video/")) {
+            } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("video/")) {
                 filetype.setImageResource(R.drawable.home_icon_videonormal);
 
-            } else if (FileUtil.getMIMEtype(fileShare.getFileName()).startsWith("image/")) {
+            } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("image/")) {
                 filetype.setImageResource(R.drawable.home_icon_picturenormal);
-            } else if (FileUtil.getMIMEtype(fileShare.getFileName()).startsWith("text/")) {
+            } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("text/")) {
                 filetype.setImageResource(R.drawable.home_icon_txt);
-            } else if (FileUtil.getMIMEtype(fileShare.getFileName()).contains("powerpoint")) {
+            } else if (FileUtil.getMIMEtype(fileShare.getPath()).contains("powerpoint")) {
                 filetype.setImageResource(R.drawable.home_icon_ppt);
             } else {
-                if (getExtensionName(fileShare.getFileName()).contains("xls")) {
+                if (getExtensionName(fileShare.getPath()).contains("xls")) {
                     filetype.setImageResource(R.drawable.home_icon_excel);
-                } else if (getExtensionName(fileShare.getFileName()).contains("pdf")) {
+                } else if (getExtensionName(fileShare.getPath()).contains("pdf")) {
                     filetype.setImageResource(R.drawable.home_icon_pdf);
-                } else if (getExtensionName(fileShare.getFileName()).contains("apk")) {
+                } else if (getExtensionName(fileShare.getPath()).contains("apk")) {
                     filetype.setImageResource(R.drawable.home_icon_apknormal);
-                } else if (getExtensionName(fileShare.getFileName()).contains("zip") || getExtensionName(fileShare.getFileName()).contains("rar")) {
+                } else if (getExtensionName(fileShare.getPath()).contains("zip") || getExtensionName(fileShare.getPath()).contains("rar")) {
                     filetype.setImageResource(R.drawable.home_icon_zip);
-                } else if (getExtensionName(fileShare.getFileName()).contains("doc") || getExtensionName(fileShare.getFileName()).contains("dot")) {
+                } else if (getExtensionName(fileShare.getPath()).contains("doc") || getExtensionName(fileShare.getPath()).contains("dot")) {
                     filetype.setImageResource(R.drawable.home_icon_word);
                 } else {
-                    filetype.setImageResource(R.drawable.home_icon_other);
+                    if (fileShare.getPath().contains("fold")) {
+                        filetype.setImageResource(R.drawable.home_icon_flod);
+                    } else
+                        filetype.setImageResource(R.drawable.home_icon_other);
                 }
             }
             if (isvis1.get(position) == View.VISIBLE) {
@@ -327,7 +279,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             download.setText(down.get(position));
             Message msg = new Message();
             for (int i = 0; i < mDownloadFileInfos.size(); i++) {
-                if (mDownloadFileInfos.get(i).getFileName().equals(fileShare.getFileName())) {
+                if (mDownloadFileInfos.get(i).getFileName().equals(fileShare.getPath())) {
                     Log.i("xinxi", mDownloadFileInfos.get(i).getFileSizeLong() + "    " + mDownloadFileInfos.get(i).getDownloadedSizeLong());
                     int totalSize = (int) mDownloadFileInfos.get(i).getFileSizeLong();
                     int downloaded = (int) mDownloadFileInfos.get(i).getDownloadedSizeLong();
@@ -389,7 +341,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 
         CheckFile checkFile;//检查本地是否存在类
 
-        public void setFileShare(FileShare fileShare) {
+        public void setFileShare(FileShares fileShare) {
             this.fileShare = fileShare;
         }
 
@@ -427,8 +379,8 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             } else if (down.get((int) v.getTag()).equals("打开")) {
                 checkFile = new CheckFile(context);
                 for (int i = 0; i < checkFile.findFile().size(); i++) {
-                    if (checkFile.findFile().get(i).equals(fileShare.getFileName())) {
-                        File file = new File(SDcardDir + fileShare.getFileName());
+                    if (checkFile.findFile().get(i).equals(fileShare.getPath())) {
+                        File file = new File(SDcardDir + fileShare.getPath());
                         FileUtil.openFile(file, context);
                     }
                 }
@@ -494,8 +446,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 
         @OnClick(R.id.delete)
         public void delete(final View v) {
-            String t = fileShare.getDateStr().substring(0, 4) + "/" + fileShare.getDateStr();
-            String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + fileShare.getFileName();
+            String url = getURL();
             FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
                 @Override
                 public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
@@ -533,6 +484,12 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 return file.delete();
             }
             return false;
+        }
+
+        public String getURL() {
+            String t = fileShare.getPath();
+            String url = HttpUrl.Url.BASIC + "/userfiles/fileshare/" + t + "/" + fileShare.getPath();
+            return url;
         }
     }
 
@@ -572,16 +529,18 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 //            }
         }
     }
+
     private boolean checkNetworkState() {
         boolean flag = false;
         //得到网络连接信息
-        ConnectivityManager  manager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         //去进行判断网络是否连接
         if (manager.getActiveNetworkInfo() != null) {
             flag = manager.getActiveNetworkInfo().isAvailable();
         }
         return flag;
     }
+
     public boolean addNewDownloadFileInfo(DownloadFileInfo downloadFileInfo) {
         if (downloadFileInfo != null) {
             if (!mDownloadFileInfos.contains(downloadFileInfo)) {
