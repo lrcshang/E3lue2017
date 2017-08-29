@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.e3lue.us.R;
+import com.e3lue.us.callback.MyItemClickListener;
 import com.e3lue.us.model.FileShare;
 import com.e3lue.us.model.FileShares;
 import com.e3lue.us.model.HttpUrl;
@@ -49,6 +50,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
     private LayoutInflater inflater;
     private Context context;
     FileShares fileShare;
+    List<FileShares>Dfiles=new ArrayList<>();
     List<Integer> isvis = new ArrayList<>();
     List<Integer> isvis1 = new ArrayList<>();
     List<String> down = new ArrayList<>();
@@ -92,6 +94,17 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             }
             if (msg.what == 0x04) {
                 if (!down.get(position).equals("等待")) {
+                    List<String> urls=new ArrayList<>();
+                    for (int j = 0; j < mDownloadFileInfos.size(); j++) {
+                        switch (mDownloadFileInfos.get(j).getStatus()) {
+                            case Status.DOWNLOAD_STATUS_PAUSED:
+                            case Status.DOWNLOAD_STATUS_ERROR:
+                                urls.add(mDownloadFileInfos.get(j).getUrl());
+                                break;
+                        }
+                    }
+                    FileDownloader.start(urls);
+                    updateDownloadFileInfos();
                     down.set(position, "等待");
                     isvis1.set(position, View.GONE);
                     isvis.set(position, View.VISIBLE);
@@ -111,14 +124,18 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         }
     };
 
-    public void setFileRess(List<FileShares> fileRess) {
+    public void setFileRess(List<FileShares> fileRess,int a) {
+        fileRes.clear();
         for (int i = 0; i < fileRess.size(); i++) {
-            if (fileRess.get(i).getPId() == 0) {
+            if (fileRess.get(i).getPId() == a) {
                 fileRes.add(fileRess.get(i));
                 isvis.add(i, View.GONE);
                 isvis1.add(i, View.VISIBLE);
                 progress.add(0);
                 down.add(i, "下载");
+            }
+            if (fileRess.get(i).getType().equals("file")){
+                Dfiles.add(fileRess.get(i));
             }
         }
         setFileRes(fileRes);
@@ -198,7 +215,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         return fileRes == null ? 0 : fileRes.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.file_type)
         ImageView filetype;
@@ -224,9 +241,14 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         public ViewHolder(View view) {
             super(view);
             itemView.setClickable(true);
+            view.setOnClickListener(this);
             ButterKnife.bind(this, itemView);
         }
-
+        @Override
+        public void onClick(View v) {
+            setFileRess(fileRess, fileRes.get(getPosition()).getId());
+            Toast.makeText(context,getPosition()+fileRes.get(getPosition()).getType()+"",Toast.LENGTH_SHORT).show();
+        }
         /**
          * String t = filelists.get(pos).getDateStr().substring(0, 4) + "/" + filelists.get(pos).getDateStr();
          * String url = HttpUrl.Url.BASIC + "/userfiles/fileshare/" + 1PPT + "/" + 324公司简介20170704.pdf;
@@ -235,35 +257,36 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             filetitle.setText(fileShare.getPath());
 //            fileperson.setText(fileShare.getDocumentMaker());
 //            filedate.setText(fileShare.getCreateDate().substring(0, fileShare.getCreateDate().indexOf("T")));
-            if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("audio/")) {
-                filetype.setImageResource(R.drawable.home_icon_music);
-            } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("video/")) {
-                filetype.setImageResource(R.drawable.home_icon_videonormal);
-
-            } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("image/")) {
-                filetype.setImageResource(R.drawable.home_icon_picturenormal);
-            } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("text/")) {
-                filetype.setImageResource(R.drawable.home_icon_txt);
-            } else if (FileUtil.getMIMEtype(fileShare.getPath()).contains("powerpoint")) {
-                filetype.setImageResource(R.drawable.home_icon_ppt);
-            } else {
-                if (getExtensionName(fileShare.getPath()).contains("xls")) {
-                    filetype.setImageResource(R.drawable.home_icon_excel);
-                } else if (getExtensionName(fileShare.getPath()).contains("pdf")) {
-                    filetype.setImageResource(R.drawable.home_icon_pdf);
-                } else if (getExtensionName(fileShare.getPath()).contains("apk")) {
-                    filetype.setImageResource(R.drawable.home_icon_apknormal);
-                } else if (getExtensionName(fileShare.getPath()).contains("zip") || getExtensionName(fileShare.getPath()).contains("rar")) {
-                    filetype.setImageResource(R.drawable.home_icon_zip);
-                } else if (getExtensionName(fileShare.getPath()).contains("doc") || getExtensionName(fileShare.getPath()).contains("dot")) {
-                    filetype.setImageResource(R.drawable.home_icon_word);
+            if (fileShare.getType().equals("fold")){
+                filetype.setImageResource(R.drawable.home_icon_flod);
+            }else {
+                if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("audio/")) {
+                    filetype.setImageResource(R.drawable.home_icon_music);
+                } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("video/")) {
+                    filetype.setImageResource(R.drawable.home_icon_videonormal);
+                } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("image/")) {
+                    filetype.setImageResource(R.drawable.home_icon_picturenormal);
+                } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("text/")) {
+                    filetype.setImageResource(R.drawable.home_icon_txt);
+                } else if (FileUtil.getMIMEtype(fileShare.getPath()).contains("powerpoint")) {
+                    filetype.setImageResource(R.drawable.home_icon_ppt);
                 } else {
-                    if (fileShare.getType().contains("fold")) {
-                        filetype.setImageResource(R.drawable.home_icon_flod);
-                    } else
+                    if (getExtensionName(fileShare.getPath()).contains("xls")) {
+                        filetype.setImageResource(R.drawable.home_icon_excel);
+                    } else if (getExtensionName(fileShare.getPath()).contains("pdf")) {
+                        filetype.setImageResource(R.drawable.home_icon_pdf);
+                    } else if (getExtensionName(fileShare.getPath()).contains("apk")) {
+                        filetype.setImageResource(R.drawable.home_icon_apknormal);
+                    } else if (getExtensionName(fileShare.getPath()).contains("zip") || getExtensionName(fileShare.getPath()).contains("rar")) {
+                        filetype.setImageResource(R.drawable.home_icon_zip);
+                    } else if (getExtensionName(fileShare.getPath()).contains("doc") || getExtensionName(fileShare.getPath()).contains("dot")) {
+                        filetype.setImageResource(R.drawable.home_icon_word);
+                    } else {
                         filetype.setImageResource(R.drawable.home_icon_other);
+                    }
                 }
             }
+
             if (isvis1.get(position) == View.VISIBLE) {
                 linearLayout.setVisibility(View.VISIBLE);
             } else {

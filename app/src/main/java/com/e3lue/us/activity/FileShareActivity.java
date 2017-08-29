@@ -76,10 +76,7 @@ public class FileShareActivity extends SwipeBackActivity {
         alldownoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                for (int i = 0; i < list.getChildCount(); i++) {
                 adapter.vh.downAllFile();
-//                }
-
             }
         });
         getData(HttpUrl.Url.FileShareList);
@@ -105,9 +102,9 @@ public class FileShareActivity extends SwipeBackActivity {
                                 filelists = JSONArray.parseArray(r.getData().toString(), FileShare.class);
                                 adapter.setFilelists(filelists);
                             } else {
-                                Log.i("xinxi",r.getData().toString());
+                                Log.i("xinxi", r.getData().toString());
                                 fileRes = JSONArray.parseArray(r.getData().toString(), FileShares.class);
-                                adapter.setFileRess(fileRes);
+                                adapter.setFileRess(fileRes, 0);
                             }
                         }
                     }
