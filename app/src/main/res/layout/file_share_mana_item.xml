@@ -101,6 +101,7 @@
             android:layout_height="36dp"
             android:textColor="@color/white"
             android:textSize="@dimen/text_med"
+            android:visibility="gone"
             android:text="下载" />
     </LinearLayout>
 </LinearLayout>

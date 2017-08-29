@@ -1,5 +1,6 @@
 package com.e3lue.us.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.e3lue.us.R;
+import com.e3lue.us.activity.FileShareActivity;
+import com.e3lue.us.callback.MyBackChickListener;
 import com.e3lue.us.callback.MyItemClickListener;
 import com.e3lue.us.model.FileShare;
 import com.e3lue.us.model.FileShares;
@@ -48,7 +51,7 @@ import butterknife.OnClick;
 public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.ViewHolder> implements OnRetryableFileDownloadStatusListener {
     List<FileShares> fileRess = new ArrayList<>();
     private LayoutInflater inflater;
-    private Context context;
+    private FileShareActivity context;
     FileShares fileShare;
     List<FileShares>Dfiles=new ArrayList<>();
     List<Integer> isvis = new ArrayList<>();
@@ -158,7 +161,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         return false;
     }
 
-    public DownloadAdapter_1(Context context) {
+    public DownloadAdapter_1(FileShareActivity context) {
         this.context = context;
 //        this.filelists = filelists;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -215,7 +218,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         return fileRes == null ? 0 : fileRes.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener ,MyBackChickListener{
 
         @BindView(R.id.file_type)
         ImageView filetype;
@@ -242,8 +245,20 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             super(view);
             itemView.setClickable(true);
             view.setOnClickListener(this);
+            context.setBackChickListener(this);
             ButterKnife.bind(this, itemView);
         }
+
+        @Override
+        public void onBackChick() {
+//            Toast.makeText(context,"返回",Toast.LENGTH_SHORT).show();
+            if (fileRes.get(0).getPId()>0){
+                setFileRess(fileRess,fileRes.get(0).getPId()-1);
+            }else {
+                context.finish();
+            }
+        }
+
         @Override
         public void onClick(View v) {
             setFileRess(fileRess, fileRes.get(getPosition()).getId());
@@ -429,11 +444,11 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             List<String> urls = new ArrayList<>();
             urls.clear();
             for (int i = 0; i < down.size(); i++) {
-//                String t = filelists.get(i).getDateStr().substring(0, 4) + "/" + filelists.get(i).getDateStr();
-//                String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + filelists.get(i).getFileName();
-                if (down.get(i).equals("下载")) {
+                String t = fileShare.getPath();
+                String url = HttpUrl.Url.BASIC + "/userfiles/fileshare/" + t + "/" + fileShare.getPath();
+                if (down.get(i).equals("下载")&&fileRes.get(i).getType().equals("file")) {
 //                    Log.i("xinxi", url);
-//                    urls.add(url);
+                    urls.add(url);
                 }
                 isvis.set(i, View.VISIBLE);
                 isvis1.set(i, View.GONE);
@@ -448,7 +463,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                         break;
                 }
             }
-            FileDownloader.start(urls);
+//            FileDownloader.start(urls);
             updateDownloadFileInfos();
             Log.i("xinxi", urls.size() + "  :");
         }
@@ -509,13 +524,13 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             return false;
         }
 
-        public String getURL() {
-            String t = fileShare.getPath();
-            String url = HttpUrl.Url.BASIC + "/userfiles/fileshare/" + t + "/" + fileShare.getPath();
-            return url;
-        }
-    }
 
+    }
+    public String getURL() {
+        String t = fileShare.getPath();
+        String url = HttpUrl.Url.BASIC + "/userfiles/fileshare/" + t + "/" + fileShare.getPath();
+        return url;
+    }
     @Override
     public void onFileDownloadStatusRetrying(DownloadFileInfo downloadFileInfo, int retryTimes) {
         // 正在重试下载（如果你配置了重试次数，当一旦下载失败时会尝试重试下载），retryTimes是当前第几次重试
@@ -584,7 +599,6 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         }
         return false;
     }
-
     @Override
     public void onFileDownloadStatusPreparing(DownloadFileInfo downloadFileInfo) {
         // 准备中（即，正在连接资源）

@@ -6,6 +6,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.e3lue.us.R;
 import com.e3lue.us.adapter.DownloadAdapter;
 import com.e3lue.us.adapter.DownloadAdapter_1;
+import com.e3lue.us.callback.MyBackChickListener;
 import com.e3lue.us.http.HttpClient;
 import com.e3lue.us.model.FileShare;
 import com.e3lue.us.model.FileShares;
@@ -54,6 +56,7 @@ public class FileShareActivity extends SwipeBackActivity {
     List<FileShare> filelists;
     List<FileShares> fileRes;
     CheckFile checkFile;//检查本地是否存在类
+    MyBackChickListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +125,18 @@ public class FileShareActivity extends SwipeBackActivity {
         super.onDestroy();
         adapter.unRegister();
         FileDownloader.unregisterDownloadStatusListener(adapter);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            listener.onBackChick();
+        }
+        return true;
+    }
+
+    public  void setBackChickListener(MyBackChickListener listener) {
+        this.listener = listener;
     }
 
     @Override
