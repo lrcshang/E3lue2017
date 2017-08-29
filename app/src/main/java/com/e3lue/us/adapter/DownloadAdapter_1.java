@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,15 +29,12 @@ import org.wlf.filedownloader.DownloadFileInfo;
 import org.wlf.filedownloader.FileDownloader;
 import org.wlf.filedownloader.base.Status;
 import org.wlf.filedownloader.listener.OnDeleteDownloadFileListener;
-import org.wlf.filedownloader.listener.OnDeleteDownloadFilesListener;
 import org.wlf.filedownloader.listener.OnRetryableFileDownloadStatusListener;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,12 +44,12 @@ import butterknife.OnClick;
  * Created by Leo on 2017/6/23.
  */
 
-public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHolder> implements OnRetryableFileDownloadStatusListener {
-    List<FileShare> filelists;
+public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.ViewHolder> implements OnRetryableFileDownloadStatusListener {
+//    List<FileShare> filelists;
     List<FileShares> fileRes;
     private LayoutInflater inflater;
     private Context context;
-    FileShare fileShare;
+//    FileShare fileShare;
     List<Integer> isvis = new ArrayList<>();
     List<Integer> isvis1 = new ArrayList<>();
     List<String> down = new ArrayList<>();
@@ -75,6 +71,8 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
                     notifyDataSetChanged();
                 }
             }
+            if (!isExist(position))
+                return;
             if (msg.what == 0x02) {
                 if (!isExist(position))
                     return;
@@ -122,16 +120,16 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
     private Boolean isExist(int position) {
         initDownloadFileInfos();
         for (int i = 0; i < mDownloadFileInfos.size(); i++) {
-            if (mDownloadFileInfos.get(i).getFileName().equals(filelists.get(position).getFileName())) {
-                return true;
-            }
+//            if (mDownloadFileInfos.get(i).getFileName().equals(filelists.get(position).getFileName())) {
+//                return true;
+//            }
         }
         return false;
     }
 
-    public DownloadAdapter(Context context, List<FileShare> filelists) {
+    public DownloadAdapter_1(Context context) {
         this.context = context;
-        this.filelists = filelists;
+//        this.filelists = filelists;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         initDownloadFileInfos();
     }
@@ -147,15 +145,12 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
     }
 
     public void setFilelists(List<FileShare> filelists) {
-        this.filelists = filelists;
+//        this.filelists = filelists;
         for (int i = 0; i < filelists.size(); i++) {
-
             isvis.add(i, View.GONE);
             isvis1.add(i, View.VISIBLE);
             progress.add(0);
             down.add(i, "下载");
-
-
         }
         notifyDataSetChanged();
     }
@@ -175,8 +170,8 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        fileShare = filelists.get(position);
-        holder.setFileShare(fileShare);
+//        fileShare = filelists.get(position);
+//        holder.setFileShare(fileShare);
         holder.bind(position);
         holder.download.setTag(position);
         holder.delete.setTag(position);
@@ -184,7 +179,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return filelists == null ? 0 : filelists.size();
+        return fileRes == null ? 0 : fileRes.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -208,7 +203,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         @BindView(R.id.delete)
         ImageView delete;
         FileShare fileShare;
-        private String SDcardDir = android.os.Environment.getExternalStorageDirectory().toString() + "/e3lue/";
+        private String SDcardDir = Environment.getExternalStorageDirectory().toString() + "/e3lue/";
 
         public ViewHolder(View view) {
             super(view);
@@ -221,7 +216,6 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
                 return;
             for (int i = 0; i < mDownloadFileInfos.size(); i++) {
                 if (mDownloadFileInfos.get(i).getFileName().equals(fileShare.getFileName())) {
-                    Log.i("xinxi", filelists.size() + " " + filelists.get(0).getFileName() + i);
                     // download progress
                     Message msg = new Message();
 //                    msg.what = 0x01;
@@ -421,9 +415,9 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
                 notifyDataSetChanged();
                 downloadFile((int) v.getTag());
             } else if (down.get((int) v.getTag()).equals("暂停")) {
-                String t = filelists.get(pos).getDateStr().substring(0, 4) + "/" + filelists.get(pos).getDateStr();
-                String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + filelists.get(pos).getFileName();
-                FileDownloader.pause(url);// 暂停单个下载任务
+//                String t = filelists.get(pos).getDateStr().substring(0, 4) + "/" + filelists.get(pos).getDateStr();
+//                String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + filelists.get(pos).getFileName();
+//                FileDownloader.pause(url);// 暂停单个下载任务
                 down.set((int) v.getTag(), "继续");
 //                notifyDataSetChanged();
             } else if (down.get((int) v.getTag()).equals("继续")) {
@@ -444,14 +438,14 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
 
         public void downloadFile(final int position) {
 //            notifyDataSetChanged();
-            String t = filelists.get(position).getDateStr().substring(0, 4) + "/" + filelists.get(position).getDateStr();
-            String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + filelists.get(position).getFileName();
+//            String t = filelists.get(position).getDateStr().substring(0, 4) + "/" + filelists.get(position).getDateStr();
+//            String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + filelists.get(position).getFileName();
             File d = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "e3lue");
             if (!d.exists()) {
                 d.mkdirs();
             }
-            String path = d.getAbsolutePath().concat("/").concat(filelists.get(position).getFileName());
-            FileDownloader.start(url);
+//            String path = d.getAbsolutePath().concat("/").concat(filelists.get(position).getFileName());
+//            FileDownloader.start(url);
             updateDownloadFileInfos();
         }
 
@@ -460,11 +454,11 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
             List<String> urls = new ArrayList<>();
             urls.clear();
             for (int i = 0; i < down.size(); i++) {
-                String t = filelists.get(i).getDateStr().substring(0, 4) + "/" + filelists.get(i).getDateStr();
-                String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + filelists.get(i).getFileName();
+//                String t = filelists.get(i).getDateStr().substring(0, 4) + "/" + filelists.get(i).getDateStr();
+//                String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + filelists.get(i).getFileName();
                 if (down.get(i).equals("下载")) {
-                    Log.i("xinxi", url);
-                    urls.add(url);
+//                    Log.i("xinxi", url);
+//                    urls.add(url);
                 }
                 isvis.set(i, View.VISIBLE);
                 isvis1.set(i, View.GONE);
@@ -569,13 +563,13 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
             // add succeed
             notifyDataSetChanged();
         } else {
-            for (int i = 0; i < filelists.size(); i++) {
-                if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
-                    if (down.get(i).equals("暂停")&&checkNetworkState())return;
-                    down.set(i, "等待");
-                    notifyDataSetChanged();
-                }
-            }
+//            for (int i = 0; i < filelists.size(); i++) {
+//                if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
+//                    if (down.get(i).equals("暂停")&&checkNetworkState())return;
+//                    down.set(i,"等待");
+//                    notifyDataSetChanged();
+//                }
+//            }
         }
     }
     private boolean checkNetworkState() {
@@ -634,20 +628,20 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         int totalSize = (int) downloadFileInfo.getFileSizeLong();
         int downloaded = (int) downloadFileInfo.getDownloadedSizeLong();
 
-        for (int i = 0; i < filelists.size(); i++) {
-            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName()) && !down.get(i).equals("暂停")) {
-                down.set(i, "暂停");
-                isvis1.set(i, View.GONE);
-                isvis.set(i, View.VISIBLE);
-                notifyDataSetChanged();
-            }
-        }
-        for (int i = 0; i < filelists.size(); i++) {
-            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
-                progress.set(i, (int) (downloaded * 100.0 / totalSize));
-                notifyDataSetChanged();
-            }
-        }
+//        for (int i = 0; i < filelists.size(); i++) {
+//            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName()) && !down.get(i).equals("暂停")) {
+//                down.set(i, "暂停");
+//                isvis1.set(i, View.GONE);
+//                isvis.set(i, View.VISIBLE);
+//                notifyDataSetChanged();
+//            }
+//        }
+//        for (int i = 0; i < filelists.size(); i++) {
+//            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
+//                progress.set(i, (int) (downloaded * 100.0 / totalSize));
+//                notifyDataSetChanged();
+//            }
+//        }
         // download size
         double downloadSize = downloadFileInfo.getDownloadedSizeLong() / 1024f / 1024f;
         double fileSize = downloadFileInfo.getFileSizeLong() / 1024f / 1024f;
@@ -676,12 +670,12 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
             return;
         }
 
-        for (int i = 0; i < filelists.size(); i++) {
-            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
-                down.set(i, "继续");
-                notifyDataSetChanged();
-            }
-        }
+//        for (int i = 0; i < filelists.size(); i++) {
+//            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
+//                down.set(i, "继续");
+//                notifyDataSetChanged();
+//            }
+//        }
     }
 
     @Override
@@ -692,13 +686,13 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         }
 
         String url = downloadFileInfo.getUrl();
-        for (int i = 0; i < filelists.size(); i++) {
-            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
-                down.set(i, "打开");
-
-                notifyDataSetChanged();
-            }
-        }
+//        for (int i = 0; i < filelists.size(); i++) {
+//            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
+//                down.set(i, "打开");
+//
+//                notifyDataSetChanged();
+//            }
+//        }
     }
 
     @Override

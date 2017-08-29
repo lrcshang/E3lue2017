@@ -104,8 +104,8 @@ public class FileShareActivity extends SwipeBackActivity {
                                 filelists = JSONArray.parseArray(r.getData().toString(), FileShare.class);
                                 adapter.setFilelists(filelists);
                             } else {
-                                fileRes = JSONArray.parseArray(r.getData().toString(), FileShares.class);
                                 Log.i("xinxi",r.getData().toString());
+                                fileRes = JSONArray.parseArray(r.getData().toString(), FileShares.class);
                                 adapter.setFileRes(fileRes);
                             }
                         }
