@@ -258,7 +258,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 } else if (getExtensionName(fileShare.getPath()).contains("doc") || getExtensionName(fileShare.getPath()).contains("dot")) {
                     filetype.setImageResource(R.drawable.home_icon_word);
                 } else {
-                    if (fileShare.getPath().contains("fold")) {
+                    if (fileShare.getType().contains("fold")) {
                         filetype.setImageResource(R.drawable.home_icon_flod);
                     } else
                         filetype.setImageResource(R.drawable.home_icon_other);
