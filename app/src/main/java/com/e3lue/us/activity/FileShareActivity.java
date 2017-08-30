@@ -1,6 +1,7 @@
 package com.e3lue.us.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,7 +48,6 @@ public class FileShareActivity extends SwipeBackActivity {
     Button btnBack;
     @BindView(R.id.textHeadTitle)
     TextView textHeadTitle;
-
     @BindView(R.id.file_share_list)
     RecyclerView list;
     @BindView(R.id.alldownoad)
@@ -57,6 +57,23 @@ public class FileShareActivity extends SwipeBackActivity {
     List<FileShares> fileRes;
     CheckFile checkFile;//检查本地是否存在类
     MyBackChickListener listener;
+    public Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FileShares fileShares=(FileShares) msg.obj;
+            fileShares.getPId();
+            fileShares.getId();
+            if (fileShares.getPId()<=0){
+//                text.setText(fileShares.getPath());
+            }else {
+                for (int i = 0; i < fileRes.size(); i++) {
+                    if (fileRes.get(i).getId()==fileShares.getPId()){
+                    }
+                }
+            }
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +120,7 @@ public class FileShareActivity extends SwipeBackActivity {
 
                             if (URL.equals(HttpUrl.Url.FileShareList)) {
                                 filelists = JSONArray.parseArray(r.getData().toString(), FileShare.class);
-                                adapter.setFilelists(filelists);
+//                                adapter.setFilelists(filelists);
                             } else {
                                 Log.i("xinxi", r.getData().toString());
                                 fileRes = JSONArray.parseArray(r.getData().toString(), FileShares.class);
@@ -135,7 +152,7 @@ public class FileShareActivity extends SwipeBackActivity {
         return true;
     }
 
-    public  void setBackChickListener(MyBackChickListener listener) {
+    public void setBackChickListener(MyBackChickListener listener) {
         this.listener = listener;
     }
 

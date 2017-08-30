@@ -14,6 +14,12 @@
 
         <include layout="@layout/layout_main_header" />
 
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/file_share_list"
             android:layout_width="match_parent"
@@ -25,10 +31,10 @@
 
     <TextView
         android:id="@+id/alldownoad"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/space_15"
+        android:gravity="center"
         android:text="全部下载" />
 </RelativeLayout>
