@@ -138,7 +138,6 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         this.isvis = isvis;
         this.isvis1 = isvis1;
         this.Dfiles = Dfiles;
-        Log.i("xinxi", progress.size() + "");
         setFileRes(fileRes);
     }
 
@@ -353,7 +352,6 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                             break;
                         // download file status:completed
                         case Status.DOWNLOAD_STATUS_COMPLETED:
-                            Log.i("xinxi", "完成");
                             msg.what = 0x05;
                             msg.obj = position;
                             handler.sendMessage(msg);
@@ -368,20 +366,14 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         }
 
         @Override
-        public void onBackChick() {
-//            Toast.makeText(context,"返回",Toast.LENGTH_SHORT).show();
-            if (fileRes.get(0).getPId() > 0) {
-                backFileRess(fileRess, fileRes.get(0).getPId());
-            } else {
-                context.finish();
-            }
-        }
-
-        @Override
         public void onClick(View v) {
-            if (fileRes.get(getPosition()).getType().equals("fold"))
+            if (fileRes.get(getPosition()).getType().equals("fold")) {
+                Message msg = new Message();
+                msg.what = 0x01;
+                msg.obj = fileRes.get(getPosition()).getPath();
+                context.handler.sendMessage(msg);
                 setFileRess(fileRess, fileRes.get(getPosition()).getId());
-            else {
+            } else {
                 checkFile = new CheckFile(context);
                 for (int i = 0; i < checkFile.findFile().size(); i++) {
                     if (checkFile.findFile().get(i).equals(fileRes.get(getPosition()).getPath())) {
@@ -391,6 +383,20 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 }
             }
             Toast.makeText(context, getPosition() + fileRes.get(getPosition()).getPath() + "", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onBackChick() {
+//            Toast.makeText(context,"返回",Toast.LENGTH_SHORT).show();
+            if (fileRes.get(0).getPId() > 0) {
+                Message msg=new Message();
+                msg.what=0x02;
+                msg.obj= fileRes.get(0).getPath();
+                context.handler.sendMessage(msg);
+                backFileRess(fileRess, fileRes.get(0).getPId());
+            } else {
+                context.finish();
+            }
         }
 
         CheckFile checkFile;//检查本地是否存在类
@@ -413,33 +419,6 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         public void download(final View v) {
             int pos = (int) v.getTag();
             isNetworkAvailable();
-//            if (down.get((int) v.getTag()).equals("下载")) {
-//                Log.i("xinxi", "task");
-//                isvis.set((int) v.getTag(), View.VISIBLE);
-//                isvis1.set((int) v.getTag(), View.GONE);
-//                down.set((int) v.getTag(), "暂停");
-//                notifyDataSetChanged();
-//                downloadFile((int) v.getTag());
-//            } else if (down.get((int) v.getTag()).equals("暂停")) {
-////                String t = filelists.get(pos).getDateStr().substring(0, 4) + "/" + filelists.get(pos).getDateStr();
-////                String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + filelists.get(pos).getFileName();
-////                FileDownloader.pause(url);// 暂停单个下载任务
-//                down.set((int) v.getTag(), "继续");
-////                notifyDataSetChanged();
-//            } else if (down.get((int) v.getTag()).equals("继续")) {
-//                downloadFile((int) v.getTag());
-//                down.set((int) v.getTag(), "暂停");
-//                notifyDataSetChanged();
-//            } else if (down.get((int) v.getTag()).equals("打开")) {
-//                checkFile = new CheckFile(context);
-//                for (int i = 0; i < checkFile.findFile().size(); i++) {
-//                    if (checkFile.findFile().get(i).equals(fileShare.getPath())) {
-//                        File file = new File(SDcardDir + fileShare.getPath());
-//                        FileUtil.openFile(file, context);
-//                    }
-//                }
-//            }
-
         }
 
         public void downloadFile(final int position) {
@@ -486,7 +465,6 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 }
             }
             FileDownloader.start(urls);
-            Log.i("xinxi", urls.size() + "");
             updateDownloadFileInfos();
         }
 
@@ -525,7 +503,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 
         @OnClick(R.id.delete)
         public void delete(final View v) {
-            String url = getURL();
+            String url = getURL((int) v.getTag());
             if (url.equals(""))
                 return;
             FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
@@ -570,9 +548,10 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 
     }
 
-    public String getURL() {
+    public String getURL(int a) {
+        Log.i("xinxi", fileShare.getPath());
         for (int i = 0; i < mDownloadFileInfos.size(); i++) {
-            if (fileShare.getPath().equals(mDownloadFileInfos.get(i).getFileName())) {
+            if (fileRes.get(a).getPath().equals(mDownloadFileInfos.get(i).getFileName())) {
                 return mDownloadFileInfos.get(i).getUrl();
             }
         }
@@ -731,15 +710,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         if (downloadFileInfo == null) {
             return;
         }
-
         String url = downloadFileInfo.getUrl();
-//        for (int i = 0; i < filelists.size(); i++) {
-//            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
-//                down.set(i, "打开");
-//
-//                notifyDataSetChanged();
-//            }
-//        }
     }
 
     @Override
@@ -751,14 +722,17 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 
         if (FileDownloadStatusFailReason.TYPE_URL_ILLEGAL.equals(failType)) {
             // 下载failUrl时出现url错误
+            Log.i("xinxi","下载failUrl时出现连接超时");
         } else if (FileDownloadStatusFailReason.TYPE_STORAGE_SPACE_IS_FULL.equals(failType)) {
             // 下载failUrl时出现本地存储空间不足
         } else if (FileDownloadStatusFailReason.TYPE_NETWORK_DENIED.equals(failType)) {
             // 下载failUrl时出现无法访问网络
         } else if (FileDownloadStatusFailReason.TYPE_NETWORK_TIMEOUT.equals(failType)) {
             // 下载failUrl时出现连接超时
+            Log.i("xinxi","下载failUrl时出现url错误");
         } else {
             // 更多错误....
+            Log.i("xinxi","更多错误");
         }
 
         // 查看详细异常信息

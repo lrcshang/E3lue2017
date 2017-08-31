@@ -50,6 +50,8 @@ public class FileShareActivity extends SwipeBackActivity {
     TextView textHeadTitle;
     @BindView(R.id.file_share_list)
     RecyclerView list;
+    @BindView(R.id.text)
+    TextView directory;
     @BindView(R.id.alldownoad)
     TextView alldownoad;
     private DownloadAdapter_1 adapter;
@@ -60,18 +62,16 @@ public class FileShareActivity extends SwipeBackActivity {
     public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            FileShares fileShares=(FileShares) msg.obj;
-            fileShares.getPId();
-            fileShares.getId();
-            if (fileShares.getPId()<=0){
-//                text.setText(fileShares.getPath());
-            }else {
-                for (int i = 0; i < fileRes.size(); i++) {
-                    if (fileRes.get(i).getId()==fileShares.getPId()){
-                    }
-                }
-            }
 
+            if (msg.what == 0x01) {
+                String txt = (String) msg.obj;
+                directory.setText(directory.getText() + txt + ">");
+            }else if (msg.what==0x02){
+                String str=directory.getText().toString();
+                str=str.substring(0,str.length() - 1);
+                str=str.replace(str.substring(str.lastIndexOf(">")+1),"");
+                directory.setText(str);
+            }
         }
     };
 
@@ -90,6 +90,7 @@ public class FileShareActivity extends SwipeBackActivity {
         });
 
         alldownoad.setText("下载");
+        directory.setText("目录>");
         filelists = new ArrayList<>();
         fileRes = new ArrayList<>();
         adapter = new DownloadAdapter_1(FileShareActivity.this);
