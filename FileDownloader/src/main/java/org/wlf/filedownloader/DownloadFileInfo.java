@@ -12,6 +12,7 @@ import org.wlf.filedownloader.util.FileUtil;
 import org.wlf.filedownloader.util.UrlUtil;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -22,8 +23,8 @@ import java.util.Date;
  * @author wlf(Andy)
  * @email 411086563@qq.com
  */
-public class DownloadFileInfo extends BaseUrlFileInfo {
-
+public class DownloadFileInfo extends BaseUrlFileInfo implements Serializable {
+    private static final long serialVersionUID = 1L;
     /**
      * {@link DownloadFileInfo} database table info
      */
