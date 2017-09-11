@@ -632,7 +632,7 @@ public class FileUtil {
             {".txt", "text/plain"},
             {".wav", "audio/x-wav"},
             {".wma", "audio/x-ms-wma"},
-            {".wmv", "audio/x-ms-wmv"},
+            {".wmv", "video/x-ms-wmv"},
             {".wps", "application/vnd.ms-works"},
             //{".xml",    "text/xml"},
             {".xml", "text/plain"},

@@ -564,10 +564,10 @@ public class UrlUtil {
         if (url != null) {
             url = url.trim();
         }
-
         try {
             if (url.contains("/")) {
-                fileName = url.substring(url.lastIndexOf('/') + 1);
+                fileName = url.replace("http://enzatec.wicp.net:8089" + "/userfiles/fileshare/","");
+//                        substring(url.lastIndexOf('/') + 1);
                 if (fileName != null && fileName.contains("?")) {
                     fileName = fileName.substring(0, fileName.indexOf('?'));
                 }

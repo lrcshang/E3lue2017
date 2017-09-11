@@ -52,6 +52,7 @@
             android:layout_height="match_parent"
             android:paddingRight="8dp"
             android:paddingLeft="8dp"
+            app:sidebar_text_size="@dimen/text_size_15"
             app:sidebar_lazy_respond="false"
             app:sidebar_text_color="@color/blue_light" />
 

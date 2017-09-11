@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/margin_med"
-    android:layout_marginRight="@dimen/margin_med"
-    android:layout_marginTop="@dimen/margin_med"
-    android:layout_marginBottom="@dimen/margin_min"
+    android:paddingLeft="@dimen/margin_med"
+    android:paddingRight="@dimen/margin_med"
+    android:paddingTop="@dimen/margin_med"
+    android:paddingBottom="@dimen/margin_min"
     android:gravity="center"
-    android:background="@color/white"
+    android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
     <ImageView

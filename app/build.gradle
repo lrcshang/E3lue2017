@@ -70,7 +70,8 @@ android {
         }
         debug {
             minifyEnabled false
-            debuggable true
+//            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
@@ -127,7 +128,7 @@ dependencies {
     //alert
     //pop
     //tree
-    compile 'org.wlf:FileDownloader:0.3.2'
+    compile project(':FileDownloader')
     compile 'com.jakewharton:butterknife:8.5.1'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'

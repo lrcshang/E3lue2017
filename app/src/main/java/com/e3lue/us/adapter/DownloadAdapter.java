@@ -359,12 +359,12 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
                 notifyDataSetChanged();
             } else if (down.get((int) v.getTag()).equals("打开")) {
                 checkFile = new CheckFile(context);
-                for (int i = 0; i < checkFile.findFile().size(); i++) {
-                    if (checkFile.findFile().get(i).equals(fileShare.getFileName())) {
-                        File file = new File(SDcardDir + fileShare.getFileName());
-                        FileUtil.openFile(file, context);
-                    }
-                }
+//                for (int i = 0; i < checkFile.findFile().size(); i++) {
+//                    if (checkFile.findFile().get(i).equals(fileShare.getFileName())) {
+//                        File file = new File(SDcardDir + fileShare.getFileName());
+//                        FileUtil.openFile(file, context);
+//                    }
+//                }
             }
 
         }

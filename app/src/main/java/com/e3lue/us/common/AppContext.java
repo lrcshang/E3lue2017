@@ -61,9 +61,9 @@ public class AppContext extends Application {
 // 2.配置Builder
 // 配置下载文件保存的文件夹
         builder1.configFileDownloadDir(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +
-                "FileDownloader");
+                "e3lue");
 // 配置同时下载任务数量，如果不配置默认为2
-        builder1.configDownloadTaskSize(4);
+        builder1.configDownloadTaskSize(2);
 // 配置失败时尝试重试的次数，如果不配置默认为0不尝试
         builder1.configRetryDownloadTimes(5);
 // 开启调试模式，方便查看日志等调试相关，如果不配置默认不开启

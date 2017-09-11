@@ -135,8 +135,8 @@ public class TongXunLuFragment extends Fragment {
         if (list == null) list = new ArrayList<ContactPerson>();
         try {
             list = filledData(list);
-            list.addAll(list);
-            list.addAll(list);
+//            list.addAll(list);
+//            list.addAll(list);
         } catch (BadHanyuPinyinOutputFormatCombination e1) {
             e1.printStackTrace();
         }

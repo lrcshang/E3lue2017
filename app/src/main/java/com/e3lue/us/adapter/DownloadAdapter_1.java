@@ -1,8 +1,12 @@
 package com.e3lue.us.adapter;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -22,17 +26,19 @@ import com.e3lue.us.activity.FileShareActivity;
 import com.e3lue.us.callback.MyBackChickListener;
 import com.e3lue.us.model.FileShares;
 import com.e3lue.us.model.HttpUrl;
+import com.e3lue.us.service.DownloadService;
 import com.e3lue.us.ui.view.NumberProgressBar;
 import com.e3lue.us.utils.CheckFile;
 import com.e3lue.us.utils.FileUtil;
+import com.e3lue.us.utils.SharedPreferences;
 
 import org.wlf.filedownloader.DownloadFileInfo;
 import org.wlf.filedownloader.FileDownloader;
 import org.wlf.filedownloader.base.Status;
 import org.wlf.filedownloader.listener.OnDeleteDownloadFileListener;
-import org.wlf.filedownloader.listener.OnRetryableFileDownloadStatusListener;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +51,7 @@ import butterknife.OnClick;
  * Created by Leo on 2017/6/23.
  */
 
-public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.ViewHolder> implements OnRetryableFileDownloadStatusListener {
+public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.ViewHolder> {
     List<FileShares> fileRess;
     private LayoutInflater inflater;
     private FileShareActivity context;
@@ -53,10 +59,18 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
     List<FileShares> Dfiles;
     List<Integer> isvis;
     List<Integer> isvis1;
+    List<Integer> isprog = new ArrayList<>();
     List<Integer> progress;
     List<FileShares> fileRes = new ArrayList<>();
-
+    CheckFile checkFile;//检查本地是否存在类
+    String fPath = "";
+    Thread thread;
+    boolean isadd = false;
+    List<DownloadFileInfo> list = new ArrayList<>();
+    Intent intent;
+    String Dtype = "";
     private List<DownloadFileInfo> mDownloadFileInfos = Collections.synchronizedList(new ArrayList<DownloadFileInfo>());
+    List<List<String>> subAryList = new ArrayList<List<String>>();
     /***
      *
      */
@@ -66,89 +80,154 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             super.handleMessage(msg);
             int position = (int) msg.obj;
             if (msg.what == 0x01) {
+                progress.set(position, 0);
                 isvis1.set(position, View.VISIBLE);
                 isvis.set(position, View.GONE);
-                notifyDataSetChanged();
-            }
-            if (!isExist(position) || isvis1.get(position) == View.GONE)
-                return;
-            if (msg.what == 0x02) {
-                if (!isExist(position))
-                    return;
-                isvis1.set(position, View.GONE);
-                isvis.set(position, View.VISIBLE);
-                notifyDataSetChanged();
-            }
-            if (msg.what == 0x03) {
-//                isvis1.set(position, View.GONE);
-//                isvis.set(position, View.VISIBLE);
-//                notifyDataSetChanged();
-            }
-            if (msg.what == 0x04) {
-                List<String> urls = new ArrayList<>();
-                for (int j = 0; j < mDownloadFileInfos.size(); j++) {
-                    switch (mDownloadFileInfos.get(j).getStatus()) {
-                        case Status.DOWNLOAD_STATUS_PAUSED:
-                        case Status.DOWNLOAD_STATUS_ERROR:
-                            urls.add(mDownloadFileInfos.get(j).getUrl());
-                            break;
-                    }
-                    FileDownloader.start(urls);
-                    updateDownloadFileInfos();
-                    isvis1.set(position, View.GONE);
-                    isvis.set(position, View.VISIBLE);
-                    notifyDataSetChanged();
-                }
-            }
-            if (msg.what == 0x05) {
-                if (!isExist(position) || isvis1.get(position) == View.GONE)
-                    return;
-                isvis1.set(position, View.GONE);
-                isvis.set(position, View.VISIBLE);
                 notifyDataSetChanged();
             }
         }
     };
 
-    public DownloadAdapter_1(FileShareActivity context) {
+    public DownloadAdapter_1(final FileShareActivity context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        initDownloadFileInfos();
+        checkFile = new CheckFile(context);
+        thread = new ThreadInterrupt();
+        intent = new Intent(context, DownloadService.class);
+        new Thread() {
+            @Override
+            public void run() {
+                int as = 0;
+                initDownloadFileInfos();
+                if (mDownloadFileInfos.size() <= 0)
+                    return;
+                for (int i = 0; i < mDownloadFileInfos.size(); i++) {
+                    if (mDownloadFileInfos.get(i).getStatus() == Status.DOWNLOAD_STATUS_DOWNLOADING) {
+                        Message msg = new Message();
+                        msg.what = 0x03;
+                        context.handler.sendMessage(msg);
+                        return;
+                    }
+                    if (mDownloadFileInfos.get(i).getStatus() == Status.DOWNLOAD_STATUS_ERROR ||
+                            mDownloadFileInfos.get(i).getStatus() == Status.DOWNLOAD_STATUS_PAUSED) {
+                        as++;
+                    }
+                }
+                if (mDownloadFileInfos.size() != urls.size())
+                    as++;
+                if (as == 0) {
+                    Message msg = new Message();
+                    msg.what = 0x04;
+                    context.handler.sendMessage(msg);
+                }
+            }
+        }.start();
+
     }
 
     public void setFileRess(List<FileShares> fileRess, int a) {
-        List<FileShares> fileRes = new ArrayList<>();
         List<FileShares> Dfiles = new ArrayList<>();
+        this.fileRess = fileRess;
+        for (int i = 0; i < fileRess.size(); i++) {
+            if (fileRess.get(i).getType().equals("file")) {
+                Dfiles.add(fileRess.get(i));
+            }
+        }
+        this.Dfiles = Dfiles;
+        setFileRes(a);
+        thread.start();
+    }
+
+    public class ThreadInterrupt extends Thread {
+        public void run() {
+            try {
+                getURLS();
+                intent.putStringArrayListExtra("urls", (ArrayList<String>) urls);
+                intent.putExtra("bool", false);
+                context.startService(intent);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    public void setFileRes(int a) {
         List<Integer> isvis = new ArrayList<>();
         List<Integer> isvis1 = new ArrayList<>();
+        List<Integer> isprog = new ArrayList<>();
         List<Integer> progress = new ArrayList<>();
-        this.fileRess = fileRess;
+        List<FileShares> fileRes = new ArrayList<>();
         for (int i = 0; i < fileRess.size(); i++) {
             if (fileRess.get(i).getPId() == a) {
                 fileRes.add(fileRess.get(i));
                 isvis.add(View.GONE);
                 isvis1.add(View.VISIBLE);
+                isprog.add(View.GONE);
                 progress.add(0);
-            }
-            if (fileRess.get(i).getType().equals("file")) {
-                Dfiles.add(fileRess.get(i));
             }
         }
         this.progress = progress;
         this.isvis = isvis;
         this.isvis1 = isvis1;
-        this.Dfiles = Dfiles;
-        setFileRes(fileRes);
-    }
-
-    public void setFileRes(List<FileShares> fileRes) {
+        this.isprog = isprog;
         this.fileRes = fileRes;
+        list = getDownloadFileInfo();
         notifyDataSetChanged();
     }
 
-    public void backFileRess(List<FileShares> fileRess, int a) {
+    public void getURLS() {
+        for (int i = 0; i < Dfiles.size(); i++) {
+            if (Dfiles.get(i).getPId() > 0) {
+                for (int j = 0; j < fileRess.size(); j++) {
+                    if (Dfiles.get(i).getId() == fileRess.get(j).getId()) {
+                        path = fileRess.get(j).getPath();
+                        findPath(j);
+//                            FileDownloader.start(url + findPath(j));
+                    }
+                }
+            } else {
+                url = HttpUrl.Url.BASIC + "/userfiles/fileshare/" + fileRess.get(i).getPath();
+                urls.add(url);
+            }
+        }
+        int a=0x05;
+        if (SharedPreferences.getInstance().getInt("files",0)==urls.size()){
+           a= 0x04;
+        }
+        Message msg =new Message();
+        msg.what=a;
+        SharedPreferences.getInstance().getInt("files",0);
+
+
+        context.handler.sendMessage(msg);
+    }
+
+    List<String> urls = new ArrayList<>();
+    String url = HttpUrl.Url.BASIC + "/userfiles/fileshare/";
+    String path = "";
+
+    public String findPath(int a) {
+        for (int j = 0; j < fileRess.size(); j++) {
+            if (fileRess.get(a).getPId() == fileRess.get(j).getId()) {
+                if (fileRess.get(j).getPId() > 0) {
+                    path = fileRess.get(j).getPath() + "/" + path;
+                    findPath(j);
+                } else {
+                    path = fileRess.get(j).getPath() + "/" + path;
+                    Log.i("xinxi", HttpUrl.Url.BASIC + "/userfiles/fileshare/" + path);
+                    urls.add(url + path);
+                    return path;
+
+                }
+            }
+        }
+        return null;
+    }
+
+    public void backFileRess(int a) {
         List<FileShares> fileRes = new ArrayList<>();
         List<Integer> isvis = new ArrayList<>();
+        List<Integer> isprog = new ArrayList<>();
         List<Integer> isvis1 = new ArrayList<>();
         List<Integer> progress = new ArrayList<>();
         int aa = -1;
@@ -161,28 +240,18 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             if (fileRess.get(i).getPId() == aa) {
                 isvis.add(View.GONE);
                 isvis1.add(View.VISIBLE);
+                isprog.add(View.GONE);
                 progress.add(0);
                 fileRes.add(fileRess.get(i));
             }
         }
-        this.isvis.clear();
-        this.isvis1.clear();
         this.progress = progress;
         this.isvis = isvis;
         this.isvis1 = isvis1;
-        setFileRes(fileRes);
+        this.isprog = isprog;
+        this.fileRes = fileRes;
+        notifyDataSetChanged();
     }
-
-    private Boolean isExist(int position) {
-        initDownloadFileInfos();
-        for (int i = 0; i < mDownloadFileInfos.size(); i++) {
-            if (mDownloadFileInfos.get(i).getFileName().equals(fileRes.get(position).getPath())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     // init DownloadFileInfos
     private void initDownloadFileInfos() {
@@ -195,7 +264,40 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         notifyDataSetChanged();
     }
 
+    public void updateDownInfo(int totalSize, int downloaded, String FileName) {
+        for (int i = 0; i < fileRes.size(); i++) {
+            if (FileName.contains(fileRes.get(i).getPath()) && fileRes.get(i).getType().equals("file")) {
+                isvis1.set(i, View.GONE);
+                isprog.set(i, View.VISIBLE);
+                isvis.set(i, View.VISIBLE);
+                progress.set(i, (int) (downloaded * 100.0 / totalSize));
+                notifyDataSetChanged();
+            }
+        }
+    }
+
+    public BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        Bundle bundle = new Bundle();
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            bundle = intent.getExtras();
+            if (bundle.getString("FileName").equals("完成")) {
+                if (bundle.getBoolean("isd")) {
+                    vh.downAllFile();
+                }
+            } else {
+                updateDownInfo(bundle.getInt("totalSize"), bundle.getInt("downloaded"), bundle.getString("FileName"));
+            }
+        }
+
+    };
+
     public void unRegister() {
+        intent.putStringArrayListExtra("urls", (ArrayList<String>) urls);
+        intent.putExtra("bool", true);
+        context.startService(intent);
     }
 
     public ViewHolder vh;
@@ -215,6 +317,116 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         holder.bind(position);
         holder.download.setTag(position);
         holder.delete.setTag(position);
+    }
+
+    public List<DownloadFileInfo> getDownloadFileInfo() {
+        List<DownloadFileInfo> list = new ArrayList<>();
+        for (int i = 0; i < mDownloadFileInfos.size(); i++) {
+            for (int j = 0; j < fileRes.size(); j++) {
+                if (mDownloadFileInfos.get(i).getFileName().contains(fileRes.get(j).getPath()) && fileRes.get(j).getType().equals("file")) {
+                    list.add(mDownloadFileInfos.get(j));
+                    int totalSize = (int) mDownloadFileInfos.get(i).getFileSizeLong();
+                    int downloaded = (int) mDownloadFileInfos.get(i).getDownloadedSizeLong();
+//                    list.add(mDownloadFileInfos.get(i));
+                    progress.set(j, (int) (downloaded * 100.0 / totalSize));
+                    switch (mDownloadFileInfos.get(i).getStatus()) {
+                        // download file status:unknown
+                        case Status.DOWNLOAD_STATUS_UNKNOWN:
+                            break;
+                        // download file status:retrying
+                        case Status.DOWNLOAD_STATUS_RETRYING:
+                            break;
+                        // download file status:preparing
+                        case Status.DOWNLOAD_STATUS_PREPARING:
+                            break;
+                        // download file status:prepared
+                        case Status.DOWNLOAD_STATUS_PREPARED:
+                            break;
+                        // download file status:paused
+                        case Status.DOWNLOAD_STATUS_PAUSED:
+                            isvis1.set(j, View.GONE);
+                            isprog.set(j, View.VISIBLE);
+                            isvis.set(j, View.VISIBLE);
+                            break;
+                        // download file status:downloading
+                        case Status.DOWNLOAD_STATUS_DOWNLOADING:
+                            isvis1.set(j, View.GONE);
+                            isprog.set(j, View.VISIBLE);
+                            isvis.set(j, View.VISIBLE);
+                            break;
+                        // download file status:error
+                        case Status.DOWNLOAD_STATUS_ERROR:
+                            break;
+                        // download file status:waiting
+                        case Status.DOWNLOAD_STATUS_WAITING:
+                            isvis1.set(j, View.GONE);
+                            isvis.set(j, View.VISIBLE);
+                            isprog.set(j, View.VISIBLE);
+                            break;
+                        // download file status:completed
+                        case Status.DOWNLOAD_STATUS_COMPLETED:
+                            isvis1.set(j, View.GONE);
+                            isvis.set(j, View.VISIBLE);
+                            isprog.set(j, View.GONE);
+                            break;
+                        // download file status:file not exist
+                        case Status.DOWNLOAD_STATUS_FILE_NOT_EXIST:
+                            break;
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    private class MyTask extends AsyncTask<List<String>, Integer, List<String>> {
+        //onPreExecute方法用于在执行后台任务前做一些UI操作
+        @Override
+        protected void onPreExecute() {
+        }
+
+        //doInBackground方法内部执行后台任务,不可在此方法内修改UI
+        @Override
+        protected List<String> doInBackground(List<String>... params) {
+            if (mDownloadFileInfos.size() > 0) {
+                if (params[0].size() > 0) {
+                    FileDownloader.start(params[0]);
+                } else {
+                    if (SharedPreferences.getInstance().getInt("files", 0) == urls.size()) {
+                        Message msg = new Message();
+                        msg.what = 0x04;
+                        context.handler.sendMessage(msg);
+                        return null;
+                    }
+                    int su = SharedPreferences.getInstance().getInt("files", 0) / 10;
+                    FileDownloader.start(subAryList.get(su));
+                }
+            } else {
+//                for (int j = 0; j < subAryList.size(); j++) {
+                FileDownloader.start(subAryList.get(0));
+//                    publishProgress((int) ((j / (float) subAryList.size()) * 100));
+//                }
+            }
+            return null;
+        }
+
+        //onProgressUpdate方法用于更新进度信息
+        @Override
+        protected void onProgressUpdate(Integer... progresses) {
+            Log.i("xinxi", "loading..." + Integer.parseInt(progresses[0].toString()) + "%");
+        }
+
+        //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
+        @Override
+        protected void onPostExecute(List<String> result) {
+            Log.i("xinxi", "ok");
+        }
+
+        //onCancelled方法用于在取消执行中的任务时更改UI
+        @Override
+        protected void onCancelled() {
+
+        }
     }
 
     @Override
@@ -243,7 +455,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         @BindView(R.id.delete)
         ImageView delete;
         FileShares fileShare;
-        private String SDcardDir = Environment.getExternalStorageDirectory().toString() + "/FileDownloader/";
+        private String SDcardDir = Environment.getExternalStorageDirectory().toString() + "/e3lue";
 
         public ViewHolder(View view) {
             super(view);
@@ -265,7 +477,10 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 filetype.setImageResource(R.drawable.home_icon_flod);
             } else {
                 if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("audio/")) {
-                    filetype.setImageResource(R.drawable.home_icon_music);
+                    if (getExtensionName(fileShare.getPath()).contains("wmv"))
+                        filetype.setImageResource(R.drawable.home_icon_videonormal);
+                    else
+                        filetype.setImageResource(R.drawable.home_icon_music);
                 } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("video/")) {
                     filetype.setImageResource(R.drawable.home_icon_videonormal);
                 } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("image/")) {
@@ -296,110 +511,92 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             } else {
                 linearLayout.setVisibility(View.GONE);
             }
-            if (isvis.get(position) == View.VISIBLE) {
+            if (isprog.get(position) == View.VISIBLE) {
                 pbProgress.setVisibility(View.VISIBLE);
-                delete.setVisibility(View.VISIBLE);
             } else {
                 pbProgress.setVisibility(View.GONE);
+            }
+            if (isvis.get(position) == View.VISIBLE) {
+                delete.setVisibility(View.VISIBLE);
+            } else {
                 delete.setVisibility(View.GONE);
             }
-//            download.setText(down.get(position));
-            Message msg = new Message();
-            for (int i = 0; i < mDownloadFileInfos.size(); i++) {
-                if (mDownloadFileInfos.get(i).getFileName().equals(fileShare.getPath())) {
-                    Log.i("xinxi", mDownloadFileInfos.get(i).getFileSizeLong() + "    " + mDownloadFileInfos.get(i).getDownloadedSizeLong());
-                    int totalSize = (int) mDownloadFileInfos.get(i).getFileSizeLong();
-                    int downloaded = (int) mDownloadFileInfos.get(i).getDownloadedSizeLong();
-                    progress.set(position, (int) (downloaded * 100.0 / totalSize));
-                    pbProgress.setProgress(progress.get(position));
-                    switch (mDownloadFileInfos.get(i).getStatus()) {
-                        // download file status:unknown
-                        case Status.DOWNLOAD_STATUS_UNKNOWN:
-//                            tvText.setText(context.getString(R.string.main__can_not_download));
-                            break;
-                        // download file status:retrying
-                        case Status.DOWNLOAD_STATUS_RETRYING:
-//                            tvText.setText(context.getString(R.string.main__retrying_connect_resource));
-                            break;
-                        // download file status:preparing
-                        case Status.DOWNLOAD_STATUS_PREPARING:
-//                            tvText.setText(context.getString(R.string.main__getting_resource));
-                            break;
-                        // download file status:prepared
-                        case Status.DOWNLOAD_STATUS_PREPARED:
-
-                            break;
-                        // download file status:paused
-                        case Status.DOWNLOAD_STATUS_PAUSED:
-                            msg.what = 0x02;
-                            msg.obj = position;
-                            handler.sendMessage(msg);
-                            break;
-                        // download file status:downloading
-                        case Status.DOWNLOAD_STATUS_DOWNLOADING:
-                            msg.what = 0x03;
-                            msg.obj = position;
-                            handler.sendMessage(msg);
-                            break;
-                        // download file status:error
-                        case Status.DOWNLOAD_STATUS_ERROR:
-                            break;
-                        // download file status:waiting
-                        case Status.DOWNLOAD_STATUS_WAITING:
-                            msg.what = 0x04;
-                            msg.obj = position;
-                            handler.sendMessage(msg);
-                            break;
-                        // download file status:completed
-                        case Status.DOWNLOAD_STATUS_COMPLETED:
-                            msg.what = 0x05;
-                            msg.obj = position;
-                            handler.sendMessage(msg);
-                            break;
-                        // download file status:file not exist
-                        case Status.DOWNLOAD_STATUS_FILE_NOT_EXIST:
-                            break;
-                    }
-                }
-            }
-
+            pbProgress.setProgress(progress.get(position));
         }
 
         @Override
         public void onClick(View v) {
             if (fileRes.get(getPosition()).getType().equals("fold")) {
+
+                fPath = fPath + "/" + fileRes.get(getPosition()).getPath();
+                Log.i("xinxi", fPath);
                 Message msg = new Message();
                 msg.what = 0x01;
                 msg.obj = fileRes.get(getPosition()).getPath();
                 context.handler.sendMessage(msg);
-                setFileRess(fileRess, fileRes.get(getPosition()).getId());
+                setFileRes(fileRes.get(getPosition()).getId());
+//                mHandler.post(mRunnable);
             } else {
-                checkFile = new CheckFile(context);
-                for (int i = 0; i < checkFile.findFile().size(); i++) {
-                    if (checkFile.findFile().get(i).equals(fileRes.get(getPosition()).getPath())) {
-                        File file = new File(SDcardDir + fileRes.get(getPosition()).getPath());
+                List<String> filelist = checkFile.findFile(fPath);
+                for (int i = 0; i < filelist.size(); i++) {
+                    if (filelist.get(i).equals(fileRes.get(getPosition()).getPath())) {
+                        File file = new File(SDcardDir + fPath + "/" + fileRes.get(getPosition()).getPath());
                         FileUtil.openFile(file, context);
+                        return;
                     }
                 }
             }
-            Toast.makeText(context, getPosition() + fileRes.get(getPosition()).getPath() + "", Toast.LENGTH_SHORT).show();
+        }
+
+        public class ThreadInterrupt extends Thread {
+            public void run() {
+//                initDownloadFileInfos();
+                List<String> urls = new ArrayList<>();
+                boolean is = true;
+                Log.i("xinxi", SharedPreferences.getInstance().getInt("files", 0) + "");
+                if (SharedPreferences.getInstance().getInt("files", 0) % 10 != 0) {
+                    for (int j = 0; j < mDownloadFileInfos.size(); j++) {
+                        switch (mDownloadFileInfos.get(j).getStatus()) {
+                            case Status.DOWNLOAD_STATUS_ERROR:
+                                Log.i("xinxi", mDownloadFileInfos.get(j).getUrl());
+//                            Dtype = "error";
+                                urls.add(mDownloadFileInfos.get(j).getUrl());
+                                break;
+                            case Status.DOWNLOAD_STATUS_PAUSED:
+                                Log.i("xinxi", mDownloadFileInfos.get(j).getFileName());
+                                urls.add(mDownloadFileInfos.get(j).getUrl());
+                                break;
+                            case Status.DOWNLOAD_STATUS_DOWNLOADING:
+                                is = false;
+                                break;
+                        }
+                    }
+                }
+                if (!is) {
+                    return;
+                }
+                MyTask mTask = new MyTask();
+                mTask.execute(urls);
+            }
         }
 
         @Override
         public void onBackChick() {
 //            Toast.makeText(context,"返回",Toast.LENGTH_SHORT).show();
             if (fileRes.get(0).getPId() > 0) {
-                Message msg=new Message();
-                msg.what=0x02;
-                msg.obj= fileRes.get(0).getPath();
+                fPath = fPath.replace(fPath.substring(fPath.lastIndexOf("/") + 1), "");
+                fPath = fPath.substring(0, fPath.length() - 1);
+                Log.i("xinxi", fPath);
+                Message msg = new Message();
+                msg.what = 0x02;
+                msg.obj = fileRes.get(0).getPath();
                 context.handler.sendMessage(msg);
-                backFileRess(fileRess, fileRes.get(0).getPId());
+                backFileRess(fileRes.get(0).getPId());
             } else {
+                thread.interrupt();
                 context.finish();
             }
         }
-
-        CheckFile checkFile;//检查本地是否存在类
 
         public void setFileShare(FileShares fileShare) {
             this.fileShare = fileShare;
@@ -421,131 +618,110 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             isNetworkAvailable();
         }
 
-        public void downloadFile(final int position) {
-//            notifyDataSetChanged();
-//            String t = filelists.get(position).getDateStr().substring(0, 4) + "/" + filelists.get(position).getDateStr();
-//            String url = HttpUrl.Url.BASIC + "/userfiles/Planning/" + t + "/" + filelists.get(position).getFileName();
-            File d = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "e3lue");
-            if (!d.exists()) {
-                d.mkdirs();
-            }
-//            String path = d.getAbsolutePath().concat("/").concat(filelists.get(position).getFileName());
-//            FileDownloader.start(url);
-            updateDownloadFileInfos();
-        }
-
         public void downAllFile() {
-            isNetworkAvailable();
-            List<String> urls = new ArrayList<>();
-            urls.clear();
-            if (mDownloadFileInfos.size() > 0) {
-                for (int j = 0; j < mDownloadFileInfos.size(); j++) {
-                    switch (mDownloadFileInfos.get(j).getStatus()) {
-                        case Status.DOWNLOAD_STATUS_PAUSED:
-                        case Status.DOWNLOAD_STATUS_ERROR:
-                            urls.add(mDownloadFileInfos.get(j).getUrl());
-                            break;
-                    }
-                }
-            }
-            String url = HttpUrl.Url.BASIC + "/userfiles/fileshare/";
-            for (int i = 0; i < Dfiles.size(); i++) {
-                if (Dfiles.get(i).getPId() > 0) {
-                    for (int j = 0; j < fileRess.size(); j++) {
-                        if (Dfiles.get(i).getId() == fileRess.get(j).getId()) {
-                            path = fileRess.get(j).getPath();
-                            urls.add(url + findPath(j));
-                        }
-                    }
-                } else {
-                    url = HttpUrl.Url.BASIC + "/userfiles/fileshare/" + fileRess.get(i).getPath();
-                    urls.add(url);
-//                        isvis.set(i, View.VISIBLE);
-//                        isvis1.set(i, View.GONE);
-                }
-            }
-            FileDownloader.start(urls);
-            updateDownloadFileInfos();
-        }
-
-        String path = "";
-
-        public String findPath(int a) {
-            for (int j = 0; j < fileRess.size(); j++) {
-                if (fileRess.get(a).getPId() == fileRess.get(j).getId()) {
-                    if (fileRess.get(j).getPId() > 0) {
-                        path = fileRess.get(j).getPath() + "/" + path;
-                        findPath(j);
-                    } else {
-                        path = fileRess.get(j).getPath() + "/" + path;
-                        Log.i("xinxi", HttpUrl.Url.BASIC + "/userfiles/fileshare/" + path);
-                        return path;
-
-                    }
-                }
-            }
-            return null;
-        }
-
-        private void isNetworkAvailable() {
-            ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            State gprs = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
-            State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
-            if (gprs == State.CONNECTED || gprs == State.CONNECTING) {
-                Toast.makeText(context, "当前网络为数据网络", Toast.LENGTH_SHORT).show();
-            }
-            //判断为wifi状态下才加载广告，如果是GPRS手机网络则不加载！
-            if (wifi == State.CONNECTED || wifi == State.CONNECTING) {
-                Toast.makeText(context, "wifi is open! wifi", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-
-        @OnClick(R.id.delete)
-        public void delete(final View v) {
-            String url = getURL((int) v.getTag());
-            if (url.equals(""))
+            if (!isNetworkAvailable())
                 return;
-            FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
-                @Override
-                public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
-                    Message msg = new Message();
-                    msg.what = 0x01;
-                    msg.obj = v.getTag();
-                    handler.sendMessage(msg);
-                    Log.e("wlf", "onDeleteDownloadFileSuccess 成功回调，单个删除" + downloadFileDeleted.getFileName()
-                            + "成功");
+            if (mDownloadFileInfos.size() <= 0) {
+                initDownloadFileInfos();
+            }
+            if (mDownloadFileInfos.size() > 0) {
+                splitAry(urls, 10);
+                Thread thread = new ThreadInterrupt();
+                thread.interrupt();
+                thread.start();
+            } else {
+                splitAry(urls, 10);
+                MyTask mTask = new MyTask();
+                mTask.execute(urls);
+            }
+        }
+
+        public class Dthread extends Thread {
+            @Override
+            public void run() {
+                FileDownloader.start(urls);
+            }
+        }
+
+        private void splitAry(List<String> ary, int subSize) {
+            int count = ary.size() % subSize == 0 ? ary.size() / subSize : ary.size() / subSize + 1;
+            for (int i = 0; i < count; i++) {
+                int index = i * subSize;
+
+                List<String> list = new ArrayList<>();
+                int j = 0;
+                while (j < subSize && index < ary.size()) {
+                    list.add(ary.get(index++));
+                    j++;
                 }
 
-                @Override
-                public void onDeleteDownloadFilePrepared(DownloadFileInfo downloadFileNeedDelete) {
-                    if (downloadFileNeedDelete != null) {
-                    }
-                }
+                subAryList.add(list);
+            }
+//            subList = new ArrayList<>();
+            if (subAryList.size() <= 0) return;
+//            for (i = 0; i < subAryList.size(); i++) {
+//            }
+        }
+    }
 
-                @Override
-                public void onDeleteDownloadFileFailed(DownloadFileInfo downloadFileInfo,
-                                                       DeleteDownloadFileFailReason failReason) {
+    private boolean isNetworkAvailable() {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        State gprs = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
+        State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
+        if (gprs == State.CONNECTED || gprs == State.CONNECTING) {
+            Toast.makeText(context, "当前网络为数据网络，未下载任务", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        //判断为wifi状态下才加载广告，如果是GPRS手机网络则不加载！
+        if (wifi == State.CONNECTED || wifi == State.CONNECTING) {
+//            Toast.makeText(context, "wifi is open! wifi", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
 
-                    Log.e("wlf", "onDeleteDownloadFileFailed 出错回调，单个删除" + downloadFileInfo.getFileName() +
-                            "失败");
+    @OnClick(R.id.delete)
+    public void delete(final View v) {
+        String url = getURL((int) v.getTag());
+        if (url.equals(""))
+            return;
+        FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
+            @Override
+            public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
+                Message msg = new Message();
+                msg.what = 0x01;
+                msg.obj = v.getTag();
+                handler.sendMessage(msg);
+                Log.e("wlf", "onDeleteDownloadFileSuccess 成功回调，单个删除" + downloadFileDeleted.getFileName()
+                        + "成功");
+            }
+
+            @Override
+            public void onDeleteDownloadFilePrepared(DownloadFileInfo downloadFileNeedDelete) {
+                if (downloadFileNeedDelete != null) {
                 }
-            });
+            }
+
+            @Override
+            public void onDeleteDownloadFileFailed(DownloadFileInfo downloadFileInfo,
+                                                   DeleteDownloadFileFailReason failReason) {
+
+                Log.e("wlf", "onDeleteDownloadFileFailed 出错回调，单个删除" + downloadFileInfo.getFileName() +
+                        "失败");
+            }
+        });
 //            if (deleteFile(SDcardDir + fileShare.getFileName())) {
 //                Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
 //            } else
 //                Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show();
+    }
+
+    public boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.isFile() && file.exists()) {
+            return file.delete();
         }
-
-        public boolean deleteFile(String filePath) {
-            File file = new File(filePath);
-            if (file.isFile() && file.exists()) {
-                return file.delete();
-            }
-            return false;
-        }
-
-
+        return false;
     }
 
     public String getURL(int a) {
@@ -556,189 +732,5 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             }
         }
         return "";
-    }
-
-    @Override
-    public void onFileDownloadStatusRetrying(DownloadFileInfo downloadFileInfo, int retryTimes) {
-        // 正在重试下载（如果你配置了重试次数，当一旦下载失败时会尝试重试下载），retryTimes是当前第几次重试
-
-        if (downloadFileInfo == null) {
-            return;
-        }
-//        String url = downloadFileInfo.getUrl();
-//            TextView tvText = (TextView) cacheConvertView.findViewById(R.id.tvText);
-//            tvText.setText(cacheConvertView.getContext().getString(R.string.main__retrying_connect_resource) + "(" +
-//                    retryTimes + ")");
-
-    }
-
-    @Override
-    public void onFileDownloadStatusWaiting(DownloadFileInfo downloadFileInfo) {
-        // 等待下载（等待其它任务执行完成，或者FileDownloader在忙别的操作）
-
-        if (downloadFileInfo == null) {
-            return;
-        }
-
-        // add
-        if (addNewDownloadFileInfo(downloadFileInfo)) {
-            // add succeed
-            notifyDataSetChanged();
-        } else {
-//            for (int i = 0; i < filelists.size(); i++) {
-//                if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
-//                    if (down.get(i).equals("暂停")&&checkNetworkState())return;
-//                    down.set(i,"等待");
-//                    notifyDataSetChanged();
-//                }
-//            }
-        }
-    }
-
-    private boolean checkNetworkState() {
-        boolean flag = false;
-        //得到网络连接信息
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        //去进行判断网络是否连接
-        if (manager.getActiveNetworkInfo() != null) {
-            flag = manager.getActiveNetworkInfo().isAvailable();
-        }
-        return flag;
-    }
-
-    public boolean addNewDownloadFileInfo(DownloadFileInfo downloadFileInfo) {
-        if (downloadFileInfo != null) {
-            if (!mDownloadFileInfos.contains(downloadFileInfo)) {
-                boolean isFind = false;
-                for (DownloadFileInfo info : mDownloadFileInfos) {
-                    if (info != null && info.getUrl().equals(downloadFileInfo.getUrl())) {
-                        isFind = true;
-                        break;
-                    }
-                }
-                if (isFind) {
-                    return false;
-                }
-                mDownloadFileInfos.add(downloadFileInfo);
-                notifyDataSetChanged();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void onFileDownloadStatusPreparing(DownloadFileInfo downloadFileInfo) {
-        // 准备中（即，正在连接资源）
-    }
-
-    @Override
-    public void onFileDownloadStatusPrepared(DownloadFileInfo downloadFileInfo) {
-        // 已准备好（即，已经连接到了资源）
-    }
-
-    @Override
-    public void onFileDownloadStatusDownloading(DownloadFileInfo downloadFileInfo, float downloadSpeed, long
-            remainingTime) {
-        // 正在下载，downloadSpeed为当前下载速度，单位KB/s，remainingTime为预估的剩余时间，单位秒
-
-        if (downloadFileInfo == null) {
-            return;
-        }
-
-        String url = downloadFileInfo.getUrl();
-
-        // download progress
-        int totalSize = (int) downloadFileInfo.getFileSizeLong();
-        int downloaded = (int) downloadFileInfo.getDownloadedSizeLong();
-
-//        for (int i = 0; i < filelists.size(); i++) {
-//            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName()) && !down.get(i).equals("暂停")) {
-//                down.set(i, "暂停");
-//                isvis1.set(i, View.GONE);
-//                isvis.set(i, View.VISIBLE);
-//                notifyDataSetChanged();
-//            }
-//        }
-        for (int i = 0; i < fileRes.size(); i++) {
-            if (downloadFileInfo.getFileName().equals(fileRes.get(i).getPath())) {
-                isvis1.set(i, View.GONE);
-                isvis.set(i, View.VISIBLE);
-                progress.set(i, (int) (downloaded * 100.0 / totalSize));
-                notifyDataSetChanged();
-            }
-        }
-        // download size
-        double downloadSize = downloadFileInfo.getDownloadedSizeLong() / 1024f / 1024f;
-        double fileSize = downloadFileInfo.getFileSizeLong() / 1024f / 1024f;
-
-//            tvDownloadSize.setText(((float) (Math.round(downloadSize * 100)) / 100) + "M/");
-//            tvTotalSize.setText(((float) (Math.round(fileSize * 100)) / 100) + "M");
-
-        // download percent
-        double percent = downloadSize / fileSize * 100;
-//            tvPercent.setText(((float) (Math.round(percent * 100)) / 100) + "%");
-
-        // download speed and remain times
-//            String speed = ((float) (Math.round(downloadSpeed * 100)) / 100) + "KB/s" + "  " + TimeUtil
-//                    .seconds2HH_mm_ss(remainingTime);
-//            tvText.setText(speed);
-//            tvText.setTag(speed);
-
-//            setBackgroundOnClickListener(lnlyDownloadItem, downloadFileInfo);
-    }
-
-    @Override
-    public void onFileDownloadStatusPaused(DownloadFileInfo downloadFileInfo) {
-        // 下载已被暂停
-
-        if (downloadFileInfo == null) {
-            return;
-        }
-
-//        for (int i = 0; i < filelists.size(); i++) {
-//            if (downloadFileInfo.getFileName().equals(filelists.get(i).getFileName())) {
-//                down.set(i, "继续");
-//                notifyDataSetChanged();
-//            }
-//        }
-    }
-
-    @Override
-    public void onFileDownloadStatusCompleted(DownloadFileInfo downloadFileInfo) {
-        // 下载完成（整个文件已经全部下载完成）
-        if (downloadFileInfo == null) {
-            return;
-        }
-        String url = downloadFileInfo.getUrl();
-    }
-
-    @Override
-    public void onFileDownloadStatusFailed(String url, DownloadFileInfo downloadFileInfo, FileDownloadStatusFailReason failReason) {
-        // 下载失败了，详细查看失败原因failReason，有些失败原因你可能必须关心
-
-        String failType = failReason.getType();
-        String failUrl = failReason.getUrl();// 或：failUrl = url，url和failReason.getUrl()会是一样的
-
-        if (FileDownloadStatusFailReason.TYPE_URL_ILLEGAL.equals(failType)) {
-            // 下载failUrl时出现url错误
-            Log.i("xinxi","下载failUrl时出现连接超时");
-        } else if (FileDownloadStatusFailReason.TYPE_STORAGE_SPACE_IS_FULL.equals(failType)) {
-            // 下载failUrl时出现本地存储空间不足
-        } else if (FileDownloadStatusFailReason.TYPE_NETWORK_DENIED.equals(failType)) {
-            // 下载failUrl时出现无法访问网络
-        } else if (FileDownloadStatusFailReason.TYPE_NETWORK_TIMEOUT.equals(failType)) {
-            // 下载failUrl时出现连接超时
-            Log.i("xinxi","下载failUrl时出现url错误");
-        } else {
-            // 更多错误....
-            Log.i("xinxi","更多错误");
-        }
-
-        // 查看详细异常信息
-        Throwable failCause = failReason.getCause();// 或：failReason.getOriginalCause()
-
-        // 查看异常描述信息
-        String failMsg = failReason.getMessage();// 或：failReason.getOriginalCause().getMessage()
     }
 }

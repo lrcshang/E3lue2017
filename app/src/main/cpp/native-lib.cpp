@@ -9,6 +9,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+JNIEXPORT jobject JNICALL
+Java_com_e3lue_us_utils_FiledataUtil_setFileRess(JNIEnv *env, jclass type, jobject Dfiles, jint a) {
+
+    // TODO
+
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_e3lue_us_utils_FiledataUtil_setFileRes(JNIEnv *env, jclass type, jint a) {
+
+    // TODO
+
+}
+
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_e3lue_us_utils_DiffUtils_genDiff(JNIEnv *env, jclass type, jstring oldApkPath_,

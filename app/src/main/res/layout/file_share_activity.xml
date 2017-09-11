@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/background_color"
     android:fitsSystemWindows="true">
 
     <LinearLayout
+        android:id="@+id/line1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <include layout="@layout/layout_main_header" />
 
         <TextView
+            android:paddingLeft="@dimen/space_10"
             android:text="目录："
             android:id="@+id/text"
+            android:maxLines="1"
+            android:ellipsize="middle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white" />
@@ -31,11 +37,13 @@
     </LinearLayout>
 
     <TextView
+        android:layout_margin="@dimen/space_10"
         android:id="@+id/alldownoad"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:background="@drawable/selector_text_press_color"
+        android:layout_height="@dimen/text_size_32"
         android:layout_marginBottom="@dimen/space_15"
+        android:textColor="@color/white"
         android:gravity="center"
         android:text="全部下载" />
-</RelativeLayout>
+</LinearLayout>
