@@ -343,6 +343,7 @@
             android:value="MvnD1rHbeSOmRnZczBiydyyoeerVZfAD" />
 
         <activity android:name=".activity.BgchangeActivity" />
+        <activity android:name=".activity.ImagechangeActivity" />
     </application>
 
 </manifest>

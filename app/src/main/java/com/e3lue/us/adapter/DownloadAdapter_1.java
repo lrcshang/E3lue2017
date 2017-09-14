@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import com.e3lue.us.R;
 import com.e3lue.us.activity.FileShareActivity;
+import com.e3lue.us.activity.ImagechangeActivity;
 import com.e3lue.us.callback.MyBackChickListener;
 import com.e3lue.us.model.FileShares;
 import com.e3lue.us.model.HttpUrl;
@@ -42,10 +45,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 
 /**
  * Created by Leo on 2017/6/23.
@@ -108,17 +114,6 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                         context.handler.sendMessage(msg);
                         return;
                     }
-                    if (mDownloadFileInfos.get(i).getStatus() == Status.DOWNLOAD_STATUS_ERROR ||
-                            mDownloadFileInfos.get(i).getStatus() == Status.DOWNLOAD_STATUS_PAUSED) {
-                        as++;
-                    }
-                }
-                if (mDownloadFileInfos.size() != urls.size())
-                    as++;
-                if (as == 0) {
-                    Message msg = new Message();
-                    msg.what = 0x04;
-                    context.handler.sendMessage(msg);
                 }
             }
         }.start();
@@ -142,6 +137,34 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         public void run() {
             try {
                 getURLS();
+                int a = 0x05;
+                if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
+                    for (int j = 0; j < mDownloadFileInfos.size(); j++) {
+                        for (int i = 0; i < urls.size(); i++) {
+                            if (mDownloadFileInfos.get(j).getUrl().equals(urls.get(i))) {
+                                if (mDownloadFileInfos.get(j).getStatus() == Status.DOWNLOAD_STATUS_COMPLETED) {
+                                    Log.i("xinxi", "d" + urls.size());
+                                    urls.remove(urls.get(i));
+                                }
+                            }
+                        }
+
+                    }
+                    if (urls.size() > 0) {
+                        SharedPreferences.getInstance().putInt("files", 0);
+                    }
+                    if (0 == urls.size()) {
+                        a = 0x04;
+                    }
+                }else {
+                    if (mDownloadFileInfos.size() == urls.size()) {
+                        a = 0x04;
+                    }
+                }
+
+                Message msg = new Message();
+                msg.what = a;
+                context.handler.sendMessage(msg);
                 intent.putStringArrayListExtra("urls", (ArrayList<String>) urls);
                 intent.putExtra("bool", false);
                 context.startService(intent);
@@ -159,6 +182,15 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         List<FileShares> fileRes = new ArrayList<>();
         for (int i = 0; i < fileRess.size(); i++) {
             if (fileRess.get(i).getPId() == a) {
+                if (FileUtil.getMIMEtype(fileRess.get(i).getPath()).startsWith("image/")) {
+                    int dotIndex = fileRess.get(i).getPath().lastIndexOf(".");
+                    String end = fileRess.get(i).getPath().substring(dotIndex, fileRess.get(i).getPath().length());
+                    Matcher m = Pattern.compile("_(.*?)" + end).matcher(fileRess.get(i).getPath());
+                    while (m.find()) {
+                        Log.i("xinxi", m.group(1));
+                        fileRess.get(i).setMobileSortId(Integer.valueOf(m.group(1)));
+                    }
+                }
                 fileRes.add(fileRess.get(i));
                 isvis.add(View.GONE);
                 isvis1.add(View.VISIBLE);
@@ -166,6 +198,10 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 progress.add(0);
             }
         }
+        if (fileRes.size() > 0)
+            if (FileUtil.getMIMEtype(fileRes.get(0).getPath()).startsWith("image/")) {
+                Collections.sort(fileRes);
+            }
         this.progress = progress;
         this.isvis = isvis;
         this.isvis1 = isvis1;
@@ -190,16 +226,6 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 urls.add(url);
             }
         }
-        int a=0x05;
-        if (SharedPreferences.getInstance().getInt("files",0)==urls.size()){
-           a= 0x04;
-        }
-        Message msg =new Message();
-        msg.what=a;
-        SharedPreferences.getInstance().getInt("files",0);
-
-
-        context.handler.sendMessage(msg);
     }
 
     List<String> urls = new ArrayList<>();
@@ -286,6 +312,10 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             if (bundle.getString("FileName").equals("完成")) {
                 if (bundle.getBoolean("isd")) {
                     vh.downAllFile();
+                }else {
+                    Message msg = new Message();
+                    msg.what = 0x04;
+                    DownloadAdapter_1.this.context.handler.sendMessage(msg);
                 }
             } else {
                 updateDownInfo(bundle.getInt("totalSize"), bundle.getInt("downloaded"), bundle.getString("FileName"));
@@ -389,10 +419,11 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         @Override
         protected List<String> doInBackground(List<String>... params) {
             if (mDownloadFileInfos.size() > 0) {
-                if (params[0].size() > 0) {
-                    FileDownloader.start(params[0]);
+                if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
+                    FileDownloader.start(subAryList.get(0));
+                    SharedPreferences.getInstance().putInt("Dcount", 1);
                 } else {
-                    if (SharedPreferences.getInstance().getInt("files", 0) == urls.size()) {
+                    if (SharedPreferences.getInstance().getInt("files", 0) >= urls.size()) {
                         Message msg = new Message();
                         msg.what = 0x04;
                         context.handler.sendMessage(msg);
@@ -402,10 +433,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                     FileDownloader.start(subAryList.get(su));
                 }
             } else {
-//                for (int j = 0; j < subAryList.size(); j++) {
                 FileDownloader.start(subAryList.get(0));
-//                    publishProgress((int) ((j / (float) subAryList.size()) * 100));
-//                }
             }
             return null;
         }
@@ -413,7 +441,6 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         //onProgressUpdate方法用于更新进度信息
         @Override
         protected void onProgressUpdate(Integer... progresses) {
-            Log.i("xinxi", "loading..." + Integer.parseInt(progresses[0].toString()) + "%");
         }
 
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
@@ -453,16 +480,19 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         @BindView(R.id.line1)
         LinearLayout linearLayout;
         @BindView(R.id.delete)
-        ImageView delete;
+        Button delete;
+        @BindView(R.id.linearLayout)
+        LinearLayout line;
         FileShares fileShare;
         private String SDcardDir = Environment.getExternalStorageDirectory().toString() + "/e3lue";
 
         public ViewHolder(View view) {
             super(view);
-            itemView.setClickable(true);
-            view.setOnClickListener(this);
-            context.setBackChickListener(this);
             ButterKnife.bind(this, itemView);
+            line.setOnClickListener(this);
+            delete.setOnClickListener(this);
+            context.setBackChickListener(this);
+
         }
 
         /**
@@ -477,10 +507,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 filetype.setImageResource(R.drawable.home_icon_flod);
             } else {
                 if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("audio/")) {
-                    if (getExtensionName(fileShare.getPath()).contains("wmv"))
-                        filetype.setImageResource(R.drawable.home_icon_videonormal);
-                    else
-                        filetype.setImageResource(R.drawable.home_icon_music);
+                    filetype.setImageResource(R.drawable.home_icon_music);
                 } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("video/")) {
                     filetype.setImageResource(R.drawable.home_icon_videonormal);
                 } else if (FileUtil.getMIMEtype(fileShare.getPath()).startsWith("image/")) {
@@ -525,64 +552,145 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         }
 
         @Override
-        public void onClick(View v) {
-            if (fileRes.get(getPosition()).getType().equals("fold")) {
-
-                fPath = fPath + "/" + fileRes.get(getPosition()).getPath();
-                Log.i("xinxi", fPath);
-                Message msg = new Message();
-                msg.what = 0x01;
-                msg.obj = fileRes.get(getPosition()).getPath();
-                context.handler.sendMessage(msg);
-                setFileRes(fileRes.get(getPosition()).getId());
-//                mHandler.post(mRunnable);
-            } else {
-                List<String> filelist = checkFile.findFile(fPath);
-                for (int i = 0; i < filelist.size(); i++) {
-                    if (filelist.get(i).equals(fileRes.get(getPosition()).getPath())) {
-                        File file = new File(SDcardDir + fPath + "/" + fileRes.get(getPosition()).getPath());
-                        FileUtil.openFile(file, context);
+        public void onClick(final View v) {
+            switch (v.getId()) {
+                case R.id.delete:
+                    String url = getURL(getPosition());
+                    if (url.equals(""))
                         return;
+                    FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
+                        @Override
+                        public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
+                            Message msg = new Message();
+                            msg.what = 0x01;
+                            msg.obj = v.getTag();
+                            handler.sendMessage(msg);
+                            SharedPreferences.getInstance().putInt("files", SharedPreferences.getInstance().getInt("files", 0) - 1);
+                            mDownloadFileInfos.remove(downloadFileDeleted);
+                            Log.e("wlf", "onDeleteDownloadFileSuccess 成功回调，单个删除" + downloadFileDeleted.getFileName()
+                                    + "成功");
+                        }
+
+                        @Override
+                        public void onDeleteDownloadFilePrepared(DownloadFileInfo downloadFileNeedDelete) {
+                            if (downloadFileNeedDelete != null) {
+                            }
+                        }
+
+                        @Override
+                        public void onDeleteDownloadFileFailed(DownloadFileInfo downloadFileInfo,
+                                                               DeleteDownloadFileFailReason failReason) {
+
+                            Log.e("wlf", "onDeleteDownloadFileFailed 出错回调，单个删除" + downloadFileInfo.getFileName() +
+                                    "失败");
+                        }
+                    });
+                    break;
+                case R.id.linearLayout:
+                    if (fileRes.get(getPosition()).getType().equals("fold")) {
+                        fPath = fPath + "/" + fileRes.get(getPosition()).getPath();
+                        Log.i("xinxi", fPath);
+                        Message msg = new Message();
+                        msg.what = 0x01;
+                        msg.obj = fileRes.get(getPosition()).getPath();
+                        context.handler.sendMessage(msg);
+                        setFileRes(fileRes.get(getPosition()).getId());
+                    } else {
+                        List<String> filelist = checkFile.findFile(fPath);
+                        List<String> filelists = new ArrayList<>();
+                        if (filelist.size() > 0) {
+                            for (int j = 0; j < fileRes.size(); j++) {
+                                for (int i = 0; i < filelist.size(); i++) {
+                                    if (FileUtil.getMIMEtype(filelist.get(i)).startsWith("image/")) {
+                                        if (fileRes.get(j).getPath().equals(filelist.get(i))) {
+                                            filelists.add(SDcardDir + fPath + "/" + filelist.get(i));
+                                        }
+                                    }
+                                }
+
+                            }
+                            if (filelists.size() > 0) {
+                                Intent intent = new Intent();
+                                intent.setClass(context, ImagechangeActivity.class);
+                                intent.putStringArrayListExtra("filelists", (ArrayList<String>) filelists);
+                                context.startActivity(intent);
+                                return;
+                            }
+                            for (int i = 0; i < filelist.size(); i++) {
+                                if (filelist.get(i).equals(fileRes.get(getPosition()).getPath())) {
+                                    File file = new File(SDcardDir + fPath + "/" + fileRes.get(getPosition()).getPath());
+                                    FileUtil.openFile(file, context);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    break;
+            }
+
+        }
+
+        public int[] bubbleSort(int[] args) {//冒泡排序算法
+            for (int i = 0; i < args.length - 1; i++) {
+                for (int j = i + 1; j < args.length; j++) {
+                    if (args[i] > args[j]) {
+                        int temp = args[i];
+                        args[i] = args[j];
+                        args[j] = temp;
                     }
                 }
             }
+            return args;
+        }
+
+        public String getURL(int a) {
+            Log.i("xinxi", fPath + "/" + fileRes.get(a).getPath() + " " + mDownloadFileInfos.get(0).getFileName());
+            for (int i = 0; i < mDownloadFileInfos.size(); i++) {
+                if ((fPath + "/" + fileRes.get(a).getPath()).equals("/" + mDownloadFileInfos.get(i).getFileName())) {
+                    return mDownloadFileInfos.get(i).getUrl();
+                }
+            }
+            return "";
         }
 
         public class ThreadInterrupt extends Thread {
             public void run() {
-//                initDownloadFileInfos();
                 List<String> urls = new ArrayList<>();
                 boolean is = true;
                 Log.i("xinxi", SharedPreferences.getInstance().getInt("files", 0) + "");
-                if (SharedPreferences.getInstance().getInt("files", 0) % 10 != 0) {
-                    for (int j = 0; j < mDownloadFileInfos.size(); j++) {
-                        switch (mDownloadFileInfos.get(j).getStatus()) {
-                            case Status.DOWNLOAD_STATUS_ERROR:
-                                Log.i("xinxi", mDownloadFileInfos.get(j).getUrl());
-//                            Dtype = "error";
-                                urls.add(mDownloadFileInfos.get(j).getUrl());
-                                break;
-                            case Status.DOWNLOAD_STATUS_PAUSED:
-                                Log.i("xinxi", mDownloadFileInfos.get(j).getFileName());
-                                urls.add(mDownloadFileInfos.get(j).getUrl());
-                                break;
-                            case Status.DOWNLOAD_STATUS_DOWNLOADING:
-                                is = false;
-                                break;
+                if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
+                    MyTask mTask = new MyTask();
+                    mTask.execute(urls);
+                } else {
+                    if (SharedPreferences.getInstance().getInt("files", 0) % 10 != 0) {
+                        for (int j = 0; j < mDownloadFileInfos.size(); j++) {
+                            switch (mDownloadFileInfos.get(j).getStatus()) {
+                                case Status.DOWNLOAD_STATUS_ERROR:
+                                    Log.i("xinxi", mDownloadFileInfos.get(j).getUrl());
+                                    urls.add(mDownloadFileInfos.get(j).getUrl());
+                                    break;
+                                case Status.DOWNLOAD_STATUS_PAUSED:
+                                    Log.i("xinxi", mDownloadFileInfos.get(j).getFileName());
+                                    urls.add(mDownloadFileInfos.get(j).getUrl());
+                                    break;
+                                case Status.DOWNLOAD_STATUS_DOWNLOADING:
+                                    is = false;
+                                    break;
+                            }
                         }
                     }
+                    if (!is) {
+                        return;
+                    }
+                    MyTask mTask = new MyTask();
+                    mTask.execute(urls);
                 }
-                if (!is) {
-                    return;
-                }
-                MyTask mTask = new MyTask();
-                mTask.execute(urls);
+
             }
         }
 
         @Override
         public void onBackChick() {
-//            Toast.makeText(context,"返回",Toast.LENGTH_SHORT).show();
             if (fileRes.get(0).getPId() > 0) {
                 fPath = fPath.replace(fPath.substring(fPath.lastIndexOf("/") + 1), "");
                 fPath = fPath.substring(0, fPath.length() - 1);
@@ -630,16 +738,10 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 thread.interrupt();
                 thread.start();
             } else {
+                SharedPreferences.getInstance().putInt("Dcount", 1);
                 splitAry(urls, 10);
                 MyTask mTask = new MyTask();
                 mTask.execute(urls);
-            }
-        }
-
-        public class Dthread extends Thread {
-            @Override
-            public void run() {
-                FileDownloader.start(urls);
             }
         }
 
@@ -662,59 +764,26 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 //            for (i = 0; i < subAryList.size(); i++) {
 //            }
         }
+
     }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        State gprs = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
-        State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
-        if (gprs == State.CONNECTED || gprs == State.CONNECTING) {
-            Toast.makeText(context, "当前网络为数据网络，未下载任务", Toast.LENGTH_SHORT).show();
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        if (info == null) {
+            Toast.makeText(context, "当前无网络连接，请检查网络", Toast.LENGTH_SHORT).show();
             return false;
         }
-        //判断为wifi状态下才加载广告，如果是GPRS手机网络则不加载！
-        if (wifi == State.CONNECTED || wifi == State.CONNECTING) {
-//            Toast.makeText(context, "wifi is open! wifi", Toast.LENGTH_SHORT).show();
+        if (info.getType() == ConnectivityManager.TYPE_WIFI) {
             return true;
+        }
+        if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
+            Toast.makeText(context, "当前网络为数据网络，未下载任务", Toast.LENGTH_SHORT).show();
+            return false;
         }
         return false;
     }
 
-    @OnClick(R.id.delete)
-    public void delete(final View v) {
-        String url = getURL((int) v.getTag());
-        if (url.equals(""))
-            return;
-        FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
-            @Override
-            public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
-                Message msg = new Message();
-                msg.what = 0x01;
-                msg.obj = v.getTag();
-                handler.sendMessage(msg);
-                Log.e("wlf", "onDeleteDownloadFileSuccess 成功回调，单个删除" + downloadFileDeleted.getFileName()
-                        + "成功");
-            }
-
-            @Override
-            public void onDeleteDownloadFilePrepared(DownloadFileInfo downloadFileNeedDelete) {
-                if (downloadFileNeedDelete != null) {
-                }
-            }
-
-            @Override
-            public void onDeleteDownloadFileFailed(DownloadFileInfo downloadFileInfo,
-                                                   DeleteDownloadFileFailReason failReason) {
-
-                Log.e("wlf", "onDeleteDownloadFileFailed 出错回调，单个删除" + downloadFileInfo.getFileName() +
-                        "失败");
-            }
-        });
-//            if (deleteFile(SDcardDir + fileShare.getFileName())) {
-//                Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
-//            } else
-//                Toast.makeText(context, "删除失败", Toast.LENGTH_SHORT).show();
-    }
 
     public boolean deleteFile(String filePath) {
         File file = new File(filePath);
@@ -724,13 +793,4 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         return false;
     }
 
-    public String getURL(int a) {
-        Log.i("xinxi", fileShare.getPath());
-        for (int i = 0; i < mDownloadFileInfos.size(); i++) {
-            if (fileRes.get(a).getPath().equals(mDownloadFileInfos.get(i).getFileName())) {
-                return mDownloadFileInfos.get(i).getUrl();
-            }
-        }
-        return "";
-    }
 }

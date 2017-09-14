@@ -39,23 +39,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
       >
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/contactperson_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
         <!--字母导航栏-->
         <com.gjiazhe.wavesidebar.WaveSideBar
             android:id="@+id/contactperson_side_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="right"
             android:paddingRight="8dp"
             android:paddingLeft="8dp"
-            app:sidebar_text_size="@dimen/text_size_15"
+            app:sidebar_text_size="@dimen/text_size_10"
             app:sidebar_lazy_respond="false"
             app:sidebar_text_color="@color/blue_light" />
-
     </com.e3lue.us.ui.view.PercentFrameLayout>
 
 </RelativeLayout>

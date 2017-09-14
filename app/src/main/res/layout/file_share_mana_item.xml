@@ -7,6 +7,7 @@
     android:paddingRight="@dimen/margin_med"
     android:paddingTop="@dimen/margin_med"
     android:paddingBottom="@dimen/margin_min"
+    android:id="@+id/linearLayout"
     android:gravity="center"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
@@ -81,13 +82,14 @@
 
     </LinearLayout>
 
-    <ImageView
+    <Button
         android:id="@+id/delete"
         android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/space_24"
+        android:layout_height="@dimen/space_24"
         android:layout_margin="@dimen/space_5"
-        android:src="@drawable/delete" />
+        android:background="@drawable/delete"
+        />
 
     <LinearLayout
         android:layout_width="wrap_content"

@@ -33,8 +33,6 @@ import java.util.List;
 public class DownloadService extends Service implements OnRetryableFileDownloadStatusListener {
     private List<DownloadFileInfo> mDownloadFileInfos = Collections.synchronizedList(new ArrayList<DownloadFileInfo>());
     List<String> urls;
-    String Dtype = "";
-    String filename = "";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -75,6 +73,7 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         isd = intent.getBooleanExtra("bool", false);
         urls = intent.getStringArrayListExtra("urls");
     }
+
     @Override
     public void onFileDownloadStatusRetrying(DownloadFileInfo downloadFileInfo, int retryTimes) {
         // 正在重试下载（如果你配置了重试次数，当一旦下载失败时会尝试重试下载），retryTimes是当前第几次重试
@@ -181,10 +180,11 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         if (downloadFileInfo == null) {
             return;
         }
-
         count = SharedPreferences.getInstance().getInt("files", 0) + 1;
         SharedPreferences.getInstance().putInt("files", count);
-        if (count==urls.size())
+        Boolean is=true;
+        if (count == urls.size())
+            is=false;
             Toast.makeText(DownloadService.this, downloadFileInfo.getFileName() + "全部下载完成", Toast.LENGTH_SHORT);
         if (count % 10 == 0) {
             Toast.makeText(DownloadService.this, downloadFileInfo.getFileName() + "下载完成", Toast.LENGTH_SHORT);
@@ -193,7 +193,7 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         } else {
             return;
         }
-        if (isd) {
+        if (isd&&is) {
             downAllFile();
         }
         int totalSize = (int) downloadFileInfo.getFileSizeLong();
@@ -202,7 +202,7 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         Bundle bundle = new Bundle();
         bundle.putInt("totalSize", totalSize);
         bundle.putInt("downloaded", downloaded);
-        bundle.putBoolean("isd", true);
+        bundle.putBoolean("isd", is);
         bundle.putString("FileName", "完成");
         intent.setAction(FileShareActivity.ACTION);
         intent.putExtras(bundle);
@@ -279,7 +279,10 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
     }
 
     public void downAllFile() {
-        Log.i("xinxi", "xiazai");
+        if (SharedPreferences.getInstance().getInt("files", 0) == urls.size()) {
+            Toast.makeText(this, "全部下载完成", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!isNetworkAvailable())
             return;
         if (mDownloadFileInfos.size() <= 0) {
@@ -291,10 +294,10 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
             thread.interrupt();
             thread.start();
         } else {
+            SharedPreferences.getInstance().putInt("Dcount", 1);
             splitAry(urls, 10);
             MyTask mTask = new MyTask();
             mTask.execute(urls);
-
         }
     }
 
@@ -318,47 +321,53 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
 
     public class ThreadInterrupt extends Thread {
         public void run() {
-//                initDownloadFileInfos();
             List<String> urls = new ArrayList<>();
             boolean is = true;
-            if (SharedPreferences.getInstance().getInt("files", 0) % 10 != 0) {
-                for (int j = 0; j < mDownloadFileInfos.size(); j++) {
-                    switch (mDownloadFileInfos.get(j).getStatus()) {
-                        case Status.DOWNLOAD_STATUS_ERROR:
-                            Log.i("xinxi", mDownloadFileInfos.get(j).getUrl());
-//                            Dtype = "error";
-                            urls.add(mDownloadFileInfos.get(j).getUrl());
-                            break;
-                        case Status.DOWNLOAD_STATUS_PAUSED:
-                            Log.i("xinxi", mDownloadFileInfos.get(j).getFileName());
-                            urls.add(mDownloadFileInfos.get(j).getUrl());
-                            break;
-                        case Status.DOWNLOAD_STATUS_DOWNLOADING:
-                            is = false;
-                            break;
+            Log.i("xinxi", SharedPreferences.getInstance().getInt("files", 0) + "");
+            if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
+                MyTask mTask = new MyTask();
+                mTask.execute(urls);
+            } else {
+                if (SharedPreferences.getInstance().getInt("files", 0) % 10 != 0) {
+                    for (int j = 0; j < mDownloadFileInfos.size(); j++) {
+                        switch (mDownloadFileInfos.get(j).getStatus()) {
+                            case Status.DOWNLOAD_STATUS_ERROR:
+                                Log.i("xinxi", mDownloadFileInfos.get(j).getUrl());
+                                urls.add(mDownloadFileInfos.get(j).getUrl());
+                                break;
+                            case Status.DOWNLOAD_STATUS_PAUSED:
+                                Log.i("xinxi", mDownloadFileInfos.get(j).getFileName());
+                                urls.add(mDownloadFileInfos.get(j).getUrl());
+                                break;
+                            case Status.DOWNLOAD_STATUS_DOWNLOADING:
+                                is = false;
+                                break;
+                        }
                     }
                 }
+                if (!is) {
+                    return;
+                }
+                MyTask mTask = new MyTask();
+                mTask.execute(urls);
             }
-            if (!is) {
-                return;
-            }
-            MyTask mTask = new MyTask();
-            mTask.execute(urls);
+
         }
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo.State gprs = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
-        NetworkInfo.State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
-        if (gprs == NetworkInfo.State.CONNECTED || gprs == NetworkInfo.State.CONNECTING) {
-            Toast.makeText(this, "当前网络为数据网络，未下载任务", Toast.LENGTH_SHORT).show();
+        ConnectivityManager manager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        if (info == null) {
+            Toast.makeText(this, "当前无网络连接，请检查网络", Toast.LENGTH_SHORT).show();
             return false;
         }
-        //判断为wifi状态下才加载广告，如果是GPRS手机网络则不加载！
-        if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING) {
-//            Toast.makeText(context, "wifi is open! wifi", Toast.LENGTH_SHORT).show();
+        if (info.getType() == ConnectivityManager.TYPE_WIFI) {
             return true;
+        }
+        if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
+            Toast.makeText(this, "当前网络为数据网络，未下载任务", Toast.LENGTH_SHORT).show();
+            return false;
         }
         return false;
     }
@@ -373,23 +382,18 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         @Override
         protected List<String> doInBackground(List<String>... params) {
             if (mDownloadFileInfos.size() > 0) {
-                if (params[0].size() > 0) {
-                    FileDownloader.start(params[0]);
-                } else {
-                    if (SharedPreferences.getInstance().getInt("files", 0) == urls.size())
+                if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
+                    FileDownloader.start(subAryList.get(0));
+                    SharedPreferences.getInstance().putInt("Dcount",1);
+                }else {
+                    if (SharedPreferences.getInstance().getInt("files", 0) == urls.size()) {
                         return null;
-                    int su = SharedPreferences.getInstance().getInt("files", 0) / 10;
-                    if (mDownloadFileInfos.size() % 10 != 0 && mDownloadFileInfos.size() < urls.size()) {
-                        Log.i("xinxi", "加以");
-//                        su = su + 1;
                     }
+                    int su = SharedPreferences.getInstance().getInt("files", 0) / 10;
                     FileDownloader.start(subAryList.get(su));
                 }
             } else {
-//                for (int j = 0; j < subAryList.size(); j++) {
                 FileDownloader.start(subAryList.get(0));
-//                    publishProgress((int) ((j / (float) subAryList.size()) * 100));
-//                }
             }
             return null;
         }

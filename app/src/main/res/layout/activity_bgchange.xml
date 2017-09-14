@@ -4,20 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context="com.e3lue.us.activity.BgchangeActivity">
-        <com.e3lue.us.ui.loopviewpager.AutoLoopViewPager
-            android:id="@+id/viewPager"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-            <requestFocus />
-        </com.e3lue.us.ui.loopviewpager.AutoLoopViewPager>
+    android:background="@color/black">
+
+    <com.e3lue.us.ui.loopviewpager.AutoLoopViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <requestFocus />
+    </com.e3lue.us.ui.loopviewpager.AutoLoopViewPager>
+
     <ImageView
         android:id="@+id/sure"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/space_10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/sure_icon"/>
-    </RelativeLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/space_10"
+        android:src="@drawable/sure_icon"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_18" />
+</RelativeLayout>

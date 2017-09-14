@@ -31,6 +31,7 @@ import com.e3lue.us.model.JsonResult;
 import com.e3lue.us.service.DownloadService;
 import com.e3lue.us.ui.swipebacklayout.SwipeBackActivity;
 import com.e3lue.us.utils.CheckFile;
+import com.e3lue.us.utils.SharedPreferences;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.db.DownloadManager;
@@ -66,6 +67,7 @@ public class FileShareActivity extends SwipeBackActivity {
     List<FileShare> filelists;
     List<FileShares> fileRes;
     MyBackChickListener listener;
+    Boolean isback = true;
     public static final String ACTION = "com.e3lue.us.activity.FileShareActivity";
     public Handler handler = new Handler() {
         @Override
@@ -74,18 +76,18 @@ public class FileShareActivity extends SwipeBackActivity {
             if (msg.what == 0x01) {
                 String txt = (String) msg.obj;
                 directory.setText(directory.getText() + txt + ">");
-            }else if (msg.what==0x02){
-                String str=directory.getText().toString();
-                str=str.substring(0,str.length() - 1);
-                str=str.replace(str.substring(str.lastIndexOf(">")+1),"");
+            } else if (msg.what == 0x02) {
+                String str = directory.getText().toString();
+                str = str.substring(0, str.length() - 1);
+                str = str.replace(str.substring(str.lastIndexOf(">") + 1), "");
                 directory.setText(str);
-            }else if (msg.what==0x03){
+            } else if (msg.what == 0x03) {
                 alldownoad.setText("下载中");
                 alldownoad.setEnabled(false);
-            }else if (msg.what==0x04){
+            } else if (msg.what == 0x04) {
                 alldownoad.setText("已全部下载");
                 alldownoad.setEnabled(false);
-            }else if (msg.what==0x05){
+            } else if (msg.what == 0x05) {
                 if (alldownoad.getText().equals("下载中"))
                     return;
                 alldownoad.setText("全部下载");
@@ -99,6 +101,9 @@ public class FileShareActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_share_activity);
         ButterKnife.bind(this);
+        if (!isNetworkAvailable()) {
+            isback = false;
+        }
         textHeadTitle.setText("文件共享资源");
         btnBack.setVisibility(View.VISIBLE);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -133,21 +138,24 @@ public class FileShareActivity extends SwipeBackActivity {
         filter.addAction(ACTION);
         registerReceiver(adapter.myReceiver, filter);
     }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo.State gprs = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
-        NetworkInfo.State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
-        if (gprs == NetworkInfo.State.CONNECTED || gprs == NetworkInfo.State.CONNECTING) {
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        if (info == null) {
+            Toast.makeText(this, "当前无网络连接，请检查网络", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (info.getType() == ConnectivityManager.TYPE_WIFI) {
+            return true;
+        }
+        if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
             Toast.makeText(this, "当前网络为数据网络，未下载任务", Toast.LENGTH_SHORT).show();
             return false;
         }
-        //判断为wifi状态下才加载广告，如果是GPRS手机网络则不加载！
-        if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING) {
-//            Toast.makeText(context, "wifi is open! wifi", Toast.LENGTH_SHORT).show();
-            return true;
-        }
         return false;
     }
+
     public void getData(final String URL) {
         OkGo.<String>post(URL)
                 .execute(new StringCallback() {
@@ -190,7 +198,11 @@ public class FileShareActivity extends SwipeBackActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            listener.onBackChick();
+            if (isback) {
+                listener.onBackChick();
+            }else {
+                finish();
+            }
         }
         return true;
     }

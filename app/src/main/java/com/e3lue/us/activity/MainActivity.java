@@ -71,6 +71,7 @@ public class MainActivity extends BaseFragmentActivity {
     }
 
     private void initData(Bundle savedInstanceState) {
+        SharedPreferences.getInstance().putInt("Dcount",0);
         List<String>list=new ArrayList<>();
         list.add("0000000000");
         if (SharedPreferences.getInstance().getDataList("ERRORID").size()<=0)
