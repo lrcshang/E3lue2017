@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.NetworkInfo.State;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,7 +39,6 @@ import org.wlf.filedownloader.base.Status;
 import org.wlf.filedownloader.listener.OnDeleteDownloadFileListener;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +48,6 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnTouch;
 
 /**
  * Created by Leo on 2017/6/23.
@@ -75,7 +71,8 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
     List<DownloadFileInfo> list = new ArrayList<>();
     Intent intent;
     String Dtype = "";
-    private List<DownloadFileInfo> mDownloadFileInfos = Collections.synchronizedList(new ArrayList<DownloadFileInfo>());
+    SharedPreferences instance;
+    private List<DownloadFileInfo> mDownloadFileInfos = new ArrayList<>();
     List<List<String>> subAryList = new ArrayList<List<String>>();
     /***
      *
@@ -100,11 +97,23 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         checkFile = new CheckFile(context);
         thread = new ThreadInterrupt();
         intent = new Intent(context, DownloadService.class);
+        instance = SharedPreferences.getInstance();
+    }
+
+    public void setFileRess(List<FileShares> fileRess, int a) {
+        List<FileShares> Dfiles = new ArrayList<>();
+        this.fileRess = fileRess;
+        for (int i = 0; i < fileRess.size(); i++) {
+            if (fileRess.get(i).getType().equals("file")) {
+                Dfiles.add(fileRess.get(i));
+            }
+        }
+        this.Dfiles = Dfiles;
         new Thread() {
             @Override
             public void run() {
-                int as = 0;
                 initDownloadFileInfos();
+                thread.start();
                 if (mDownloadFileInfos.size() <= 0)
                     return;
                 for (int i = 0; i < mDownloadFileInfos.size(); i++) {
@@ -117,20 +126,8 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 }
             }
         }.start();
-
-    }
-
-    public void setFileRess(List<FileShares> fileRess, int a) {
-        List<FileShares> Dfiles = new ArrayList<>();
-        this.fileRess = fileRess;
-        for (int i = 0; i < fileRess.size(); i++) {
-            if (fileRess.get(i).getType().equals("file")) {
-                Dfiles.add(fileRess.get(i));
-            }
-        }
-        this.Dfiles = Dfiles;
         setFileRes(a);
-        thread.start();
+
     }
 
     public class ThreadInterrupt extends Thread {
@@ -138,36 +135,34 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             try {
                 getURLS();
                 int a = 0x05;
-                if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
-                    for (int j = 0; j < mDownloadFileInfos.size(); j++) {
-                        for (int i = 0; i < urls.size(); i++) {
-                            if (mDownloadFileInfos.get(j).getUrl().equals(urls.get(i))) {
-                                if (mDownloadFileInfos.get(j).getStatus() == Status.DOWNLOAD_STATUS_COMPLETED) {
-                                    Log.i("xinxi", "d" + urls.size());
-                                    urls.remove(urls.get(i));
-                                }
-                            }
+                List<String> infos = instance.getDataList("urls");
+                for (int j = 0; j < infos.size(); j++) {
+                    for (int i = 0; i < urls.size(); i++) {
+                        if (infos.get(j).equals(urls.get(i))) {
+                            Log.i("xinxi", "d" +infos.get(j));
+                            urls.remove(infos.get(j));
                         }
-
                     }
+
+                }
+                if (instance.getInt("Dcount", 0) == 0) {
                     if (urls.size() > 0) {
-                        SharedPreferences.getInstance().putInt("files", 0);
+                        instance.putInt("files", 0);
                     }
                     if (0 == urls.size()) {
                         a = 0x04;
                     }
-                }else {
-                    if (mDownloadFileInfos.size() == urls.size()) {
+                    intent.putStringArrayListExtra("urls", (ArrayList<String>) urls);
+                    intent.putExtra("bool", false);
+                    context.startService(intent);
+                } else {
+                    if (0 == urls.size()) {
                         a = 0x04;
                     }
                 }
-
                 Message msg = new Message();
                 msg.what = a;
                 context.handler.sendMessage(msg);
-                intent.putStringArrayListExtra("urls", (ArrayList<String>) urls);
-                intent.putExtra("bool", false);
-                context.startService(intent);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -187,7 +182,6 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                     String end = fileRess.get(i).getPath().substring(dotIndex, fileRess.get(i).getPath().length());
                     Matcher m = Pattern.compile("_(.*?)" + end).matcher(fileRess.get(i).getPath());
                     while (m.find()) {
-                        Log.i("xinxi", m.group(1));
                         fileRess.get(i).setMobileSortId(Integer.valueOf(m.group(1)));
                     }
                 }
@@ -283,11 +277,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
     private void initDownloadFileInfos() {
         this.mDownloadFileInfos = FileDownloader.getDownloadFiles();
         Log.i("xinxi", "  " + mDownloadFileInfos.size());
-    }
-
-    void updateDownloadFileInfos() {
-        initDownloadFileInfos();
-        notifyDataSetChanged();
+//        mDownloadFileInfos.addAll(infos);
     }
 
     public void updateDownInfo(int totalSize, int downloaded, String FileName) {
@@ -311,8 +301,8 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             bundle = intent.getExtras();
             if (bundle.getString("FileName").equals("完成")) {
                 if (bundle.getBoolean("isd")) {
-                    vh.downAllFile();
-                }else {
+//                    vh.downAllFile();
+                } else {
                     Message msg = new Message();
                     msg.what = 0x04;
                     DownloadAdapter_1.this.context.handler.sendMessage(msg);
@@ -325,7 +315,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
     };
 
     public void unRegister() {
-        intent.putStringArrayListExtra("urls", (ArrayList<String>) urls);
+//        intent.putStringArrayListExtra("urls", (ArrayList<String>) urls);
         intent.putExtra("bool", true);
         context.startService(intent);
     }
@@ -351,10 +341,10 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
 
     public List<DownloadFileInfo> getDownloadFileInfo() {
         List<DownloadFileInfo> list = new ArrayList<>();
-        for (int i = 0; i < mDownloadFileInfos.size(); i++) {
-            for (int j = 0; j < fileRes.size(); j++) {
+        for (int j = 0; j < fileRes.size(); j++) {
+            for (int i = 0; i < mDownloadFileInfos.size(); i++) {
                 if (mDownloadFileInfos.get(i).getFileName().contains(fileRes.get(j).getPath()) && fileRes.get(j).getType().equals("file")) {
-                    list.add(mDownloadFileInfos.get(j));
+                    list.add(mDownloadFileInfos.get(i));
                     int totalSize = (int) mDownloadFileInfos.get(i).getFileSizeLong();
                     int downloaded = (int) mDownloadFileInfos.get(i).getDownloadedSizeLong();
 //                    list.add(mDownloadFileInfos.get(i));
@@ -395,9 +385,9 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                             break;
                         // download file status:completed
                         case Status.DOWNLOAD_STATUS_COMPLETED:
-                            isvis1.set(j, View.GONE);
-                            isvis.set(j, View.VISIBLE);
-                            isprog.set(j, View.GONE);
+//                            isvis1.set(j, View.GONE);
+//                            isvis.set(j, View.VISIBLE);
+//                            isprog.set(j, View.GONE);
                             break;
                         // download file status:file not exist
                         case Status.DOWNLOAD_STATUS_FILE_NOT_EXIST:
@@ -405,6 +395,18 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                     }
                 }
             }
+        }
+        List<String> infos = instance.getDataList("urls");
+        for (int i = 0; i < infos.size(); i++) {
+
+            for (int j = 0; j < fileRes.size(); j++) {
+                if (infos.get(i).replace(url, "/").equals(fPath + "/" + fileRes.get(j).getPath()) && fileRes.get(j).getType().equals("file")) {
+                    isvis1.set(j, View.GONE);
+                    isvis.set(j, View.VISIBLE);
+                    isprog.set(j, View.GONE);
+                }
+            }
+
         }
         return list;
     }
@@ -419,17 +421,18 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         @Override
         protected List<String> doInBackground(List<String>... params) {
             if (mDownloadFileInfos.size() > 0) {
-                if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
+                if (instance.getInt("Dcount", 0) == 0) {
                     FileDownloader.start(subAryList.get(0));
-                    SharedPreferences.getInstance().putInt("Dcount", 1);
+                    instance.putInt("Dcount", 1);
                 } else {
-                    if (SharedPreferences.getInstance().getInt("files", 0) >= urls.size()) {
+                    int a = instance.getInt("files", 0);
+                    if (a == urls.size()) {
                         Message msg = new Message();
                         msg.what = 0x04;
                         context.handler.sendMessage(msg);
                         return null;
                     }
-                    int su = SharedPreferences.getInstance().getInt("files", 0) / 10;
+                    int su = a / 10;
                     FileDownloader.start(subAryList.get(su));
                 }
             } else {
@@ -480,7 +483,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
         @BindView(R.id.line1)
         LinearLayout linearLayout;
         @BindView(R.id.delete)
-        Button delete;
+        ImageView delete;
         @BindView(R.id.linearLayout)
         LinearLayout line;
         FileShares fileShare;
@@ -558,33 +561,39 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                     String url = getURL(getPosition());
                     if (url.equals(""))
                         return;
-                    FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
-                        @Override
-                        public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
-                            Message msg = new Message();
-                            msg.what = 0x01;
-                            msg.obj = v.getTag();
-                            handler.sendMessage(msg);
-                            SharedPreferences.getInstance().putInt("files", SharedPreferences.getInstance().getInt("files", 0) - 1);
-                            mDownloadFileInfos.remove(downloadFileDeleted);
-                            Log.e("wlf", "onDeleteDownloadFileSuccess 成功回调，单个删除" + downloadFileDeleted.getFileName()
-                                    + "成功");
-                        }
-
-                        @Override
-                        public void onDeleteDownloadFilePrepared(DownloadFileInfo downloadFileNeedDelete) {
-                            if (downloadFileNeedDelete != null) {
-                            }
-                        }
-
-                        @Override
-                        public void onDeleteDownloadFileFailed(DownloadFileInfo downloadFileInfo,
-                                                               DeleteDownloadFileFailReason failReason) {
-
-                            Log.e("wlf", "onDeleteDownloadFileFailed 出错回调，单个删除" + downloadFileInfo.getFileName() +
-                                    "失败");
-                        }
-                    });
+//                    FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
+//                        @Override
+//                        public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
+////                            Message msg = new Message();
+////                            msg.what = 0x01;
+////                            msg.obj = v.getTag();
+////                            handler.sendMessage(msg);
+////                            instance.putInt("files", instance.getInt("files", 0) - 1);
+////                            List<String>infos= instance.getDataList("urls");
+////                            infos=checkFile.removeDuplicate(infos);
+////                            infos.remove(downloadFileDeleted.getUrl());
+////                            instance.setDataList("urls",infos);
+////                            mDownloadFileInfos.remove(downloadFileDeleted);
+//                            Log.e("wlf", "onDeleteDownloadFileSuccess 成功回调，单个删除" + downloadFileDeleted.getFileName()
+//                                    + "成功");
+//                        }
+//
+//                        @Override
+//                        public void onDeleteDownloadFilePrepared(DownloadFileInfo downloadFileNeedDelete) {
+//                            if (downloadFileNeedDelete != null) {
+//                            }
+//                            Log.e("wlf", "downloadFileNeedDelete 出错回调，单个删除" + downloadFileNeedDelete.getFileName() +
+//                                    "失败");
+//                        }
+//
+//                        @Override
+//                        public void onDeleteDownloadFileFailed(DownloadFileInfo downloadFileInfo,
+//                                                               DeleteDownloadFileFailReason failReason) {
+//
+//                            Log.e("wlf", "onDeleteDownloadFileFailed 出错回调，单个删除" + downloadFileInfo.getFileName() +
+//                                    "失败");
+//                        }
+//                    });
                     break;
                 case R.id.linearLayout:
                     if (fileRes.get(getPosition()).getType().equals("fold")) {
@@ -613,6 +622,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                                 Intent intent = new Intent();
                                 intent.setClass(context, ImagechangeActivity.class);
                                 intent.putStringArrayListExtra("filelists", (ArrayList<String>) filelists);
+                                intent.putExtra("getPosition",getPosition());
                                 context.startActivity(intent);
                                 return;
                             }
@@ -629,27 +639,26 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             }
 
         }
-
-        public int[] bubbleSort(int[] args) {//冒泡排序算法
-            for (int i = 0; i < args.length - 1; i++) {
-                for (int j = i + 1; j < args.length; j++) {
-                    if (args[i] > args[j]) {
-                        int temp = args[i];
-                        args[i] = args[j];
-                        args[j] = temp;
-                    }
-                }
-            }
-            return args;
-        }
-
         public String getURL(int a) {
-            Log.i("xinxi", fPath + "/" + fileRes.get(a).getPath() + " " + mDownloadFileInfos.get(0).getFileName());
-            for (int i = 0; i < mDownloadFileInfos.size(); i++) {
-                if ((fPath + "/" + fileRes.get(a).getPath()).equals("/" + mDownloadFileInfos.get(i).getFileName())) {
-                    return mDownloadFileInfos.get(i).getUrl();
-                }
+            Log.i("xinxi", fPath + "/" + fileRes.get(a).getPath() + " " );
+
+            if (deleteFile(SDcardDir+fPath + "/" + fileRes.get(a).getPath())) {
+                instance.putInt("Dcount", 1);
+                Message msg = new Message();
+                msg.what = 0x01;
+                msg.obj = a;
+                handler.sendMessage(msg);
+//                instance.putInt("files", instance.getInt("files", 1) - 1);
+                List<String>infos= instance.getDataList("urls");
+                infos=checkFile.removeDuplicate(infos);
+                infos.remove(HttpUrl.Url.BASIC + "/userfiles/fileshare"+fPath + "/" + fileRes.get(a).getPath());
+                instance.setDataList("urls",infos);
             }
+//            for (int i = 0; i < mDownloadFileInfos.size(); i++) {
+//                if ((fPath + "/" + fileRes.get(a).getPath()).equals("/" + mDownloadFileInfos.get(i).getFileName())) {
+//                    return mDownloadFileInfos.get(i).getUrl();
+//                }
+//            }
             return "";
         }
 
@@ -657,12 +666,13 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             public void run() {
                 List<String> urls = new ArrayList<>();
                 boolean is = true;
-                Log.i("xinxi", SharedPreferences.getInstance().getInt("files", 0) + "");
-                if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
+                int a = instance.getInt("files", 0);
+                if (instance.getInt("Dcount", 0) == 0) {
                     MyTask mTask = new MyTask();
                     mTask.execute(urls);
                 } else {
-                    if (SharedPreferences.getInstance().getInt("files", 0) % 10 != 0) {
+                    initDownloadFileInfos();
+                    if (a % 10 != 0) {
                         for (int j = 0; j < mDownloadFileInfos.size(); j++) {
                             switch (mDownloadFileInfos.get(j).getStatus()) {
                                 case Status.DOWNLOAD_STATUS_ERROR:
@@ -674,7 +684,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                                     urls.add(mDownloadFileInfos.get(j).getUrl());
                                     break;
                                 case Status.DOWNLOAD_STATUS_DOWNLOADING:
-                                    is = false;
+//                                is = false;
                                     break;
                             }
                         }
@@ -738,7 +748,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                 thread.interrupt();
                 thread.start();
             } else {
-                SharedPreferences.getInstance().putInt("Dcount", 1);
+                instance.putInt("Dcount", 1);
                 splitAry(urls, 10);
                 MyTask mTask = new MyTask();
                 mTask.execute(urls);

@@ -30,7 +30,7 @@ public class CheckFile {
 //        size=list.size();
 //        this.fileShares=list;
     }
-    public ArrayList<String> findFile(String path) {
+    public List<String> findFile(String path) {
         ArrayList<String> list = new ArrayList<String>();
         list = folderScan("/mnt/sdcard/e3lue"+path);
         return  removeDuplicate(list);
@@ -68,7 +68,7 @@ public class CheckFile {
         return list;
     }
 
-    public  ArrayList<String>  removeDuplicate(ArrayList<String> list) {
+    public  List<String>  removeDuplicate(List<String> list) {
         HashSet<String> set = new HashSet<String>(list);
 //        String[] titles = new String[size];
         list.clear();

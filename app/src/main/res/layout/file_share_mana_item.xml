@@ -82,13 +82,14 @@
 
     </LinearLayout>
 
-    <Button
+    <ImageView
         android:id="@+id/delete"
         android:visibility="gone"
-        android:layout_width="@dimen/space_24"
-        android:layout_height="@dimen/space_24"
-        android:layout_margin="@dimen/space_5"
-        android:background="@drawable/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="@dimen/space_5"
+        android:layout_marginRight="@dimen/space_5"
+        android:src="@drawable/delete"
         />
 
     <LinearLayout

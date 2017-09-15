@@ -15,7 +15,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.e3lue.us.R;
+import com.e3lue.us.common.AppContext;
+import com.e3lue.us.model.HttpUrl;
 import com.e3lue.us.ui.loopviewpager.AutoLoopViewPager;
 import com.e3lue.us.utils.SharedPreferences;
 
@@ -26,20 +30,22 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ImagechangeActivity extends Activity {
     private GalleryPagerAdapter galleryAdapter;
     //    int image[] = {R.drawable.ic_img_profile_bg, R.drawable.bg1, R.drawable.bg2, R.drawable.bg3, R.drawable.bg4, R.drawable.bg5
 //            , R.drawable.bg6, R.drawable.bg7, R.drawable.bg8, R.drawable.bg9};
-    List<Bitmap> images;
+//    List<Bitmap> images;
     List<String> filelists;
     Bitmap bitmap;
     @BindView(R.id.text)
     TextView title;
+    private PhotoViewAttacher mAttacher;
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            initViewPager();
         }
     };
 
@@ -49,33 +55,13 @@ public class ImagechangeActivity extends Activity {
         setContentView(R.layout.activity_bgchange);
         ButterKnife.bind(this);
         imageView = (ImageView) findViewById(R.id.sure);
-        images = new ArrayList<>();
+//        images = new ArrayList<>();
         filelists = getIntent().getStringArrayListExtra("filelists");
-        new Thread() {
-            @Override
-            public void run() {
-                for (int i = 0; i < filelists.size(); i++) {
-//                    bitmap = BitmapFactory.decodeFile(filelists.get(i).toString(), null);
-                    images.add(getBitmap(filelists.get(i).toString()));
+        pos = getIntent().getIntExtra("getPosition", 0);
+        initViewPager();
 
-                }
-                Message message=new Message();
-                message.what=0x01;
-                handler.sendMessage(message);
-            }
-        }.start();
     }
-    public Bitmap getBitmap(String imgPath) {
-        // Get bitmap through image path
-        BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        newOpts.inJustDecodeBounds = false;
-        newOpts.inPurgeable = true;
-        newOpts.inInputShareable = true;
-        // Do not compress
-        newOpts.inSampleSize = 1;
-        newOpts.inPreferredConfig = Bitmap.Config.RGB_565;
-        return BitmapFactory.decodeFile(imgPath, newOpts);
-    }
+
     ImageView imageView;
     int pos = 0;
 
@@ -84,24 +70,10 @@ public class ImagechangeActivity extends Activity {
         viewPager.stopAutoScroll(-1);
         title.setText(filelists.get(pos).substring(filelists.get(pos).lastIndexOf('/') + 1));
         imageView.setVisibility(View.GONE);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("xinxi", pos + "");
-                Intent intent = new Intent();
-                intent.putExtra("pos", pos);
-                /*
-                 * 调用setResult方法表示我将Intent对象返回给之前的那个Activity，这样就可以在onActivityResult方法中得到Intent对象，
-                 */
-                SharedPreferences.getInstance().putInt("pos", pos);
-                setResult(1001, intent);
-                //    结束当前这个Activity对象的生命
-                finish();
-            }
-        });
         viewPager.setPageMargin(40);
         galleryAdapter = new GalleryPagerAdapter();
         viewPager.setAdapter(galleryAdapter);
+        viewPager.setCurrentItem(pos);
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -126,7 +98,7 @@ public class ImagechangeActivity extends Activity {
 
         @Override
         public int getCount() {
-            return images.size();
+            return filelists.size();
         }
 
         @Override
@@ -136,16 +108,18 @@ public class ImagechangeActivity extends Activity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            ImageView item = new ImageView(ImagechangeActivity.this);
+            PhotoView item = new PhotoView(ImagechangeActivity.this);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(-1, -1);
             item.setLayoutParams(params);
             item.setScaleType(ImageView.ScaleType.CENTER);
-            item.setImageBitmap(images.get(position));
-//            Glide.with(BgchangeActivity.this)
-//                    .load(HttpUrl.Url.BASIC + "/userfiles/images/" + messageList.get(position).getMessagePicture())
-//                    .into(item);
+//            item.setImageBitmap(images.get(position));
+            mAttacher = new PhotoViewAttacher(item);
+            Glide.with(ImagechangeActivity.this)
+                    .load(filelists.get(position))
+                    .override(600, 400) // resizes the image to these dimensions (in pixel)
+                    .centerCrop()
+                    .into(item);
             container.addView(item);
-
             final int pos = position;
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -161,5 +135,18 @@ public class ImagechangeActivity extends Activity {
         public void destroyItem(ViewGroup collection, int position, Object view) {
             collection.removeView((View) view);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Glide.get(AppContext.getInstance()).clearMemory();
+        new Thread() {
+            @Override
+            public void run() {
+                Glide.get(AppContext.getInstance()).clearDiskCache();
+            }
+        }.start();
+
     }
 }

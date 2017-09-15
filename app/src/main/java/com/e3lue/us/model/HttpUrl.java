@@ -8,7 +8,7 @@ public class HttpUrl {
     public static class Url {
 
         public static final String BASIC = "http://enzatec.wicp.net:8089";
-        //public static final String BASIC = "http://192.168.1.100:8081";
+        //public static final String BASIC = "http://192.168.8.8:8089";
 
         //Login
         public static final String LOGIN = BASIC + "/Controller.aspx?controller=LoggingController&method=Login";

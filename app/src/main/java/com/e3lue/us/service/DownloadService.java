@@ -7,7 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,7 +18,7 @@ import com.e3lue.us.utils.SharedPreferences;
 import org.wlf.filedownloader.DownloadFileInfo;
 import org.wlf.filedownloader.FileDownloader;
 import org.wlf.filedownloader.base.Status;
-import org.wlf.filedownloader.listener.OnDownloadFileChangeListener;
+import org.wlf.filedownloader.listener.OnDeleteDownloadFileListener;
 import org.wlf.filedownloader.listener.OnRetryableFileDownloadStatusListener;
 
 import java.util.ArrayList;
@@ -31,8 +30,10 @@ import java.util.List;
  */
 
 public class DownloadService extends Service implements OnRetryableFileDownloadStatusListener {
-    private List<DownloadFileInfo> mDownloadFileInfos = Collections.synchronizedList(new ArrayList<DownloadFileInfo>());
+    private List<DownloadFileInfo> mDownloadFileInfos = new ArrayList<>();
     List<String> urls;
+    private SharedPreferences instance;
+    CheckFile checkFile;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -47,6 +48,8 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         super.onCreate();
         // 将当前service注册为FileDownloader下载状态监听器
         FileDownloader.registerDownloadStatusListener(DownloadService.this);
+        checkFile = new CheckFile(this);
+        instance = SharedPreferences.getInstance();
         new Thread() {
             @Override
             public void run() {
@@ -59,7 +62,9 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
 
     private void initDownloadFileInfos() {
         this.mDownloadFileInfos = FileDownloader.getDownloadFiles();
-        Log.i("xinxi", "  " + "服务");
+        List<String> infos = instance.getDataList("urls");
+//        mDownloadFileInfos.addAll(infos);
+        Log.i("xinxi", "  " + "服务 " + infos.size());
     }
 
     Boolean isd = false;
@@ -68,10 +73,12 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
         urls = new ArrayList<>();
-        if (intent.getStringArrayListExtra("urls") == null)
+        if (intent.getStringArrayListExtra("urls") == null) {
             return;
+        }
         isd = intent.getBooleanExtra("bool", false);
         urls = intent.getStringArrayListExtra("urls");
+        Log.i("xinxi", "消除 " + urls.size());
     }
 
     @Override
@@ -175,27 +182,53 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
     int count = 0;
 
     @Override
-    public void onFileDownloadStatusCompleted(DownloadFileInfo downloadFileInfo) {
+    public void onFileDownloadStatusCompleted(final DownloadFileInfo downloadFileInfo) {
         // 下载完成（整个文件已经全部下载完成）
         if (downloadFileInfo == null) {
             return;
         }
-        count = SharedPreferences.getInstance().getInt("files", 0) + 1;
-        SharedPreferences.getInstance().putInt("files", count);
-        Boolean is=true;
-        if (count == urls.size())
-            is=false;
+        FileDownloader.delete(downloadFileInfo.getUrl(), false, new OnDeleteDownloadFileListener() {
+            @Override
+            public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
+                Log.e("wlf", "onDeleteDownloadFileSuccess 成功回调，单个删除" + downloadFileDeleted.getFileName()
+                        + "成功");
+                List<String> urls = instance.getDataList("urls");
+                urls.add(downloadFileInfo.getUrl());
+                urls = checkFile.removeDuplicate(urls);
+                instance.setDataList("urls", urls);
+            }
+
+            @Override
+            public void onDeleteDownloadFilePrepared(DownloadFileInfo downloadFileNeedDelete) {
+                if (downloadFileNeedDelete != null) {
+                }
+            }
+
+            @Override
+            public void onDeleteDownloadFileFailed(DownloadFileInfo downloadFileInfo,
+                                                   DeleteDownloadFileFailReason failReason) {
+                Log.e("wlf", "onDeleteDownloadFileFailed 出错回调，单个删除" + downloadFileInfo.getFileName() +
+                        "失败");
+            }
+        });
+        int a = instance.getInt("files", 0);
+        count = a + 1;
+        instance.putInt("files", count);
+        Boolean is = true;
+        if (count == urls.size()) {
+            is = false;
             Toast.makeText(DownloadService.this, downloadFileInfo.getFileName() + "全部下载完成", Toast.LENGTH_SHORT);
-        if (count % 10 == 0) {
-            Toast.makeText(DownloadService.this, downloadFileInfo.getFileName() + "下载完成", Toast.LENGTH_SHORT);
-            Log.i("xinxi", "完成" + downloadFileInfo.getFileName() + count);
-        } else if (SharedPreferences.getInstance().getInt("files", 0) == urls.size()) {
         } else {
-            return;
+            if (count % 10 == 0) {
+                if (is) {
+                    Log.i("xinxi", "完成" + downloadFileInfo.getFileName() + count);
+                    downAllFile();
+                }
+            } else {
+                return;
+            }
         }
-        if (isd&&is) {
-            downAllFile();
-        }
+
         int totalSize = (int) downloadFileInfo.getFileSizeLong();
         int downloaded = (int) downloadFileInfo.getDownloadedSizeLong();
         Intent intent = new Intent();
@@ -230,16 +263,16 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
             // 更多错误....
 //            Log.i("xinxi","更多错误"+url);
         }
+        int a = instance.getInt("files", 0);
+
         if (downloadFileInfo == null) {
             Log.i("xinxi", "更多错误" + url + failType);
-            FileDownloader.start(url);
-            count = SharedPreferences.getInstance().getInt("files", 0) + 1;
-            SharedPreferences.getInstance().putInt("files", count);
+            count = a + 1;
+            instance.putInt("files", count);
             return;
         }
         Log.i("xinxi", "error" + downloadFileInfo.getFileName());
-        count = SharedPreferences.getInstance().getInt("files", 0) + 1;
-        SharedPreferences.getInstance().putInt("files", count);
+        FileDownloader.start(url);
         // 查看详细异常信息
         Throwable failCause = failReason.getCause();// 或：failReason.getOriginalCause()
 
@@ -279,7 +312,8 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
     }
 
     public void downAllFile() {
-        if (SharedPreferences.getInstance().getInt("files", 0) == urls.size()) {
+        int a = instance.getInt("files", 0);
+        if (a == urls.size()) {
             Toast.makeText(this, "全部下载完成", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -294,7 +328,7 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
             thread.interrupt();
             thread.start();
         } else {
-            SharedPreferences.getInstance().putInt("Dcount", 1);
+            instance.putInt("Dcount", 1);
             splitAry(urls, 10);
             MyTask mTask = new MyTask();
             mTask.execute(urls);
@@ -323,12 +357,14 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         public void run() {
             List<String> urls = new ArrayList<>();
             boolean is = true;
-            Log.i("xinxi", SharedPreferences.getInstance().getInt("files", 0) + "");
-            if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
+            int a = instance.getInt("files", 0);
+            Log.i("xinxi", a + "");
+            if (instance.getInt("Dcount", 0) == 0) {
                 MyTask mTask = new MyTask();
                 mTask.execute(urls);
             } else {
-                if (SharedPreferences.getInstance().getInt("files", 0) % 10 != 0) {
+                initDownloadFileInfos();
+                if (a % 10 != 0) {
                     for (int j = 0; j < mDownloadFileInfos.size(); j++) {
                         switch (mDownloadFileInfos.get(j).getStatus()) {
                             case Status.DOWNLOAD_STATUS_ERROR:
@@ -340,7 +376,7 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
                                 urls.add(mDownloadFileInfos.get(j).getUrl());
                                 break;
                             case Status.DOWNLOAD_STATUS_DOWNLOADING:
-                                is = false;
+//                                is = false;
                                 break;
                         }
                     }
@@ -382,14 +418,16 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         @Override
         protected List<String> doInBackground(List<String>... params) {
             if (mDownloadFileInfos.size() > 0) {
-                if (SharedPreferences.getInstance().getInt("Dcount", 0) == 0) {
+
+                if (instance.getInt("Dcount", 0) == 0) {
                     FileDownloader.start(subAryList.get(0));
-                    SharedPreferences.getInstance().putInt("Dcount",1);
-                }else {
-                    if (SharedPreferences.getInstance().getInt("files", 0) == urls.size()) {
+                    instance.putInt("Dcount", 1);
+                } else {
+                    int a = instance.getInt("files", 0);
+                    if (a == urls.size()) {
                         return null;
                     }
-                    int su = SharedPreferences.getInstance().getInt("files", 0) / 10;
+                    int su = a / 10;
                     FileDownloader.start(subAryList.get(su));
                 }
             } else {

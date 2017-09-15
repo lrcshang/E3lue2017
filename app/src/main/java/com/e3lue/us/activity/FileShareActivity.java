@@ -128,7 +128,7 @@ public class FileShareActivity extends SwipeBackActivity {
                 adapter.vh.downAllFile();
             }
         });
-        getData(HttpUrl.Url.FileShareList);
+//        getData(HttpUrl.Url.FileShareList);
         getData(HttpUrl.Url.FileShareLists);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
@@ -179,6 +179,7 @@ public class FileShareActivity extends SwipeBackActivity {
 
                     @Override
                     public void onError(Response<String> response) {
+                        isback = false;
                         progressDimss();
                     }
                 });
