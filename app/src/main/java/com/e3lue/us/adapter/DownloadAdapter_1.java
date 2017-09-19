@@ -159,6 +159,8 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                     if (0 == urls.size()) {
                         a = 0x04;
                     }
+                    intent.putExtra("bool", false);
+                    context.startService(intent);
                 }
                 Message msg = new Message();
                 msg.what = a;
@@ -549,7 +551,7 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
             if (isvis.get(position) == View.VISIBLE) {
                 delete.setVisibility(View.VISIBLE);
             } else {
-                delete.setVisibility(View.GONE);
+                delete.setVisibility(View.INVISIBLE);
             }
             pbProgress.setProgress(progress.get(position));
         }
@@ -671,29 +673,31 @@ public class DownloadAdapter_1 extends RecyclerView.Adapter<DownloadAdapter_1.Vi
                     MyTask mTask = new MyTask();
                     mTask.execute(urls);
                 } else {
-                    initDownloadFileInfos();
-                    if (a % 10 != 0) {
-                        for (int j = 0; j < mDownloadFileInfos.size(); j++) {
-                            switch (mDownloadFileInfos.get(j).getStatus()) {
-                                case Status.DOWNLOAD_STATUS_ERROR:
-                                    Log.i("xinxi", mDownloadFileInfos.get(j).getUrl());
-                                    urls.add(mDownloadFileInfos.get(j).getUrl());
-                                    break;
-                                case Status.DOWNLOAD_STATUS_PAUSED:
-                                    Log.i("xinxi", mDownloadFileInfos.get(j).getFileName());
-                                    urls.add(mDownloadFileInfos.get(j).getUrl());
-                                    break;
-                                case Status.DOWNLOAD_STATUS_DOWNLOADING:
-//                                is = false;
-                                    break;
-                            }
-                        }
-                    }
-                    if (!is) {
-                        return;
-                    }
-                    MyTask mTask = new MyTask();
-                    mTask.execute(urls);
+                    intent.putExtra("start","start");
+                    context.startService(intent);
+//                    initDownloadFileInfos();
+//                    if (a % 10 != 0) {
+//                        for (int j = 0; j < mDownloadFileInfos.size(); j++) {
+//                            switch (mDownloadFileInfos.get(j).getStatus()) {
+//                                case Status.DOWNLOAD_STATUS_ERROR:
+//                                    Log.i("xinxi", mDownloadFileInfos.get(j).getUrl());
+//                                    urls.add(mDownloadFileInfos.get(j).getUrl());
+//                                    break;
+//                                case Status.DOWNLOAD_STATUS_PAUSED:
+//                                    Log.i("xinxi", mDownloadFileInfos.get(j).getFileName());
+//                                    urls.add(mDownloadFileInfos.get(j).getUrl());
+//                                    break;
+//                                case Status.DOWNLOAD_STATUS_DOWNLOADING:
+////                                is = false;
+//                                    break;
+//                            }
+//                        }
+//                    }
+//                    if (!is) {
+//                        return;
+//                    }
+//                    MyTask mTask = new MyTask();
+//                    mTask.execute(urls);
                 }
 
             }

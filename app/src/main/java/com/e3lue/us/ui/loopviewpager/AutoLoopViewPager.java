@@ -79,8 +79,12 @@ public class AutoLoopViewPager extends LoopViewPager {
             startAutoScroll();
         }
         getParent().requestDisallowInterceptTouchEvent(true);
-
-        return super.dispatchTouchEvent(ev);
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
     /**

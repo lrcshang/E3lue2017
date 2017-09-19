@@ -50,6 +50,7 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         FileDownloader.registerDownloadStatusListener(DownloadService.this);
         checkFile = new CheckFile(this);
         instance = SharedPreferences.getInstance();
+        urls = new ArrayList<>();
         new Thread() {
             @Override
             public void run() {
@@ -72,12 +73,18 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
-        urls = new ArrayList<>();
         if (intent.getStringArrayListExtra("urls") == null) {
+            if (intent.getStringExtra("start") != null) {
+                downAllFile();
+                Log.i("xinxi", "消除 " + urls.size() + isd);
+                return;
+            }
+            isd = intent.getBooleanExtra("bool", false);
             return;
         }
         isd = intent.getBooleanExtra("bool", false);
         urls = intent.getStringArrayListExtra("urls");
+
         Log.i("xinxi", "消除 " + urls.size());
     }
 
@@ -136,7 +143,9 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         }
 
         String url = downloadFileInfo.getUrl();
-
+        if (isd) {
+            return;
+        }
         // download progress
         int totalSize = (int) downloadFileInfo.getFileSizeLong();
         int downloaded = (int) downloadFileInfo.getDownloadedSizeLong();
@@ -187,15 +196,18 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         if (downloadFileInfo == null) {
             return;
         }
+        int a = instance.getInt("files", 0);
+        count = a + 1;
+        instance.putInt("files", count);
+        List<String> urls = instance.getDataList("urls");
+        urls.add(downloadFileInfo.getUrl());
+        urls = checkFile.removeDuplicate(urls);
+        instance.setDataList("urls", urls);
         FileDownloader.delete(downloadFileInfo.getUrl(), false, new OnDeleteDownloadFileListener() {
             @Override
             public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
                 Log.e("wlf", "onDeleteDownloadFileSuccess 成功回调，单个删除" + downloadFileDeleted.getFileName()
                         + "成功");
-                List<String> urls = instance.getDataList("urls");
-                urls.add(downloadFileInfo.getUrl());
-                urls = checkFile.removeDuplicate(urls);
-                instance.setDataList("urls", urls);
             }
 
             @Override
@@ -211,13 +223,21 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
                         "失败");
             }
         });
-        int a = instance.getInt("files", 0);
-        count = a + 1;
-        instance.putInt("files", count);
         Boolean is = true;
-        if (count == urls.size()) {
+        if (count == this.urls.size()) {
             is = false;
             Toast.makeText(DownloadService.this, downloadFileInfo.getFileName() + "全部下载完成", Toast.LENGTH_SHORT);
+            int totalSize = (int) downloadFileInfo.getFileSizeLong();
+            int downloaded = (int) downloadFileInfo.getDownloadedSizeLong();
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+            bundle.putInt("totalSize", totalSize);
+            bundle.putInt("downloaded", downloaded);
+            bundle.putBoolean("isd", is);
+            bundle.putString("FileName", "完成");
+            intent.setAction(FileShareActivity.ACTION);
+            intent.putExtras(bundle);
+            sendBroadcast(intent);
         } else {
             if (count % 10 == 0) {
                 if (is) {
@@ -229,17 +249,17 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
             }
         }
 
-        int totalSize = (int) downloadFileInfo.getFileSizeLong();
-        int downloaded = (int) downloadFileInfo.getDownloadedSizeLong();
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
-        bundle.putInt("totalSize", totalSize);
-        bundle.putInt("downloaded", downloaded);
-        bundle.putBoolean("isd", is);
-        bundle.putString("FileName", "完成");
-        intent.setAction(FileShareActivity.ACTION);
-        intent.putExtras(bundle);
-        sendBroadcast(intent);
+//        int totalSize = (int) downloadFileInfo.getFileSizeLong();
+//        int downloaded = (int) downloadFileInfo.getDownloadedSizeLong();
+//        Intent intent = new Intent();
+//        Bundle bundle = new Bundle();
+//        bundle.putInt("totalSize", totalSize);
+//        bundle.putInt("downloaded", downloaded);
+//        bundle.putBoolean("isd", is);
+//        bundle.putString("FileName", "完成");
+//        intent.setAction(FileShareActivity.ACTION);
+//        intent.putExtras(bundle);
+//        sendBroadcast(intent);
     }
 
     @Override
@@ -363,8 +383,8 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
                 MyTask mTask = new MyTask();
                 mTask.execute(urls);
             } else {
-                initDownloadFileInfos();
                 if (a % 10 != 0) {
+                    initDownloadFileInfos();
                     for (int j = 0; j < mDownloadFileInfos.size(); j++) {
                         switch (mDownloadFileInfos.get(j).getStatus()) {
                             case Status.DOWNLOAD_STATUS_ERROR:

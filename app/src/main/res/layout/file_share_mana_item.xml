@@ -52,6 +52,7 @@
             app:progress_unreached_color="#CCCCCC" />
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/line1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -61,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="上传人"
+                android:text=" "
                 android:textColor="#303030" />
 
             <TextView
@@ -69,11 +70,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="   25.9M"
+                android:text="  "
                 android:textColor="#303030" />
         </LinearLayout>
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/file_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
