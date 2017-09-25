@@ -1,10 +1,10 @@
 
 {
-	"buildFiles" : [ "D:/Asworkspace/E3lue2017/app/CMakeLists.txt" ],
+	"buildFiles" : [ "D:/AsProjects/E3lue2017/app/CMakeLists.txt" ],
 	"cFileExtensions" : [ "c" ],
 	"cleanCommands" : 
 	[
-		"D:\\Androidstudio\\sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\Asworkspace\\E3lue2017\\app\\.externalNativeBuild\\cmake\\release\\armeabi --target clean"
+		"D:\\Androidstudio\\sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\AsProjects\\E3lue2017\\app\\.externalNativeBuild\\cmake\\release\\armeabi --target clean"
 	],
 	"libraries" : 
 	{
@@ -12,27 +12,27 @@
 		{
 			"abi" : "armeabi",
 			"artifactName" : "native-lib",
-			"buildCommand" : "D:\\Androidstudio\\sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\Asworkspace\\E3lue2017\\app\\.externalNativeBuild\\cmake\\release\\armeabi --target native-lib",
+			"buildCommand" : "D:\\Androidstudio\\sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build D:\\AsProjects\\E3lue2017\\app\\.externalNativeBuild\\cmake\\release\\armeabi --target native-lib",
 			"buildType" : "release",
 			"files" : 
 			[
 				
 				{
-					"flags" : "  -target armv5te-none-linux-androideabi -gcc-toolchain D:/Androidstudio/android-ndk-r13/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64 --sysroot=D:/Androidstudio/android-ndk-r13/platforms/android-17/arch-arm -Dnative_lib_EXPORTS -I..\\..\\..\\..\\src\\main\\cpp\\include  -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -march=armv5te -mtune=xscale -msoft-float -fno-integrated-as -mthumb -Wa,--noexecstack -Wformat -Werror=format-security -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -march=armv5te -mtune=xscale -msoft-float -fno-integrated-as -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -Os -DNDEBUG -Os -DNDEBUG  -fPIC      -c ",
-					"src" : "D:/Asworkspace/E3lue2017/app/src/main/cpp/native-lib.c",
-					"workingDirectory" : "D:/Asworkspace/E3lue2017/app/.externalNativeBuild/cmake/release/armeabi"
+					"flags" : "  -target armv5te-none-linux-androideabi -gcc-toolchain D:/AndroidStudio/android-ndk-r13/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64 --sysroot=D:/AndroidStudio/android-ndk-r13/platforms/android-17/arch-arm -Dnative_lib_EXPORTS -I..\\..\\..\\..\\src\\main\\cpp\\include  -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -march=armv5te -mtune=xscale -msoft-float -fno-integrated-as -mthumb -Wa,--noexecstack -Wformat -Werror=format-security -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -march=armv5te -mtune=xscale -msoft-float -fno-integrated-as -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -Os -DNDEBUG -Os -DNDEBUG  -fPIC      -c ",
+					"src" : "D:/AsProjects/E3lue2017/app/src/main/cpp/native-lib.c",
+					"workingDirectory" : "D:/AsProjects/E3lue2017/app/.externalNativeBuild/cmake/release/armeabi"
 				}
 			],
-			"output" : "D:/Asworkspace/E3lue2017/app/build/intermediates/cmake/release/obj/armeabi/libnative-lib.so",
-			"toolchain" : "3679442633"
+			"output" : "D:/AsProjects/E3lue2017/app/build/intermediates/cmake/release/obj/armeabi/libnative-lib.so",
+			"toolchain" : "3735558857"
 		}
 	},
 	"toolchains" : 
 	{
-		"3679442633" : 
+		"3735558857" : 
 		{
-			"cCompilerExecutable" : "D:/Androidstudio/android-ndk-r13/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
-			"cppCompilerExecutable" : "D:/Androidstudio/android-ndk-r13/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
+			"cCompilerExecutable" : "D:/AndroidStudio/android-ndk-r13/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+			"cppCompilerExecutable" : "D:/AndroidStudio/android-ndk-r13/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
 		}
 	}
 }

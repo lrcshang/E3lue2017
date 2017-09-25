@@ -32,7 +32,12 @@ import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.PolygonOptions;
+import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.district.DistrictResult;
+import com.baidu.mapapi.search.district.OnGetDistricSearchResultListener;
 import com.baidu.mapapi.utils.route.BaiduMapRoutePlan;
 import com.baidu.mapapi.utils.route.RouteParaOption;
 import com.e3lue.us.R;
@@ -50,7 +55,7 @@ import butterknife.ButterKnife;
  * Created by Leo on 2017/5/27.
  */
 
-public class GameClubMapActivity extends SwipeBackActivity implements View.OnClickListener  {
+public class GameClubMapActivity extends SwipeBackActivity implements View.OnClickListener , OnGetDistricSearchResultListener {
 
     @BindView(R.id.btnBack)
     Button btnBack;
@@ -113,6 +118,29 @@ public class GameClubMapActivity extends SwipeBackActivity implements View.OnCli
         InitLocation();
         completeLis();
     }
+    @Override
+    public void onGetDistrictResult(DistrictResult districtResult) {
+        // mBaiduMap.clear();
+        if (districtResult == null) {
+            return;
+        }
+        if (districtResult.error == SearchResult.ERRORNO.NO_ERROR) {
+            List<List<LatLng>> polyLines = districtResult.getPolylines();
+            if (polyLines == null) {
+                return;
+            }
+            // LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (List<LatLng> polyline : polyLines) {
+                OverlayOptions ooPolygon = new PolygonOptions().points(polyline).stroke(new Stroke(5, 0xAA00FF88))
+                        .fillColor(0xAAFFFF00);
+                mBaiduMap.addOverlay(ooPolygon);
+            }
+//            if (aa<address.length) {
+//                mDistrictSearch.searchDistrict(new DistrictSearchOption().cityName(city).districtName(address[aa]));
+//                aa++;
+//            }
+        }
+    }
     private void InitLocation(){
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);//设置定位模式
@@ -136,6 +164,11 @@ public class GameClubMapActivity extends SwipeBackActivity implements View.OnCli
             @Override
             public void onMapStatusChangeStart(MapStatus arg0) {
                 // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onMapStatusChangeStart(MapStatus mapStatus, int i) {
+
             }
 
             @Override
