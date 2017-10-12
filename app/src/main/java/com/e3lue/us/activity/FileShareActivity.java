@@ -18,12 +18,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.e3lue.us.R;
 import com.e3lue.us.adapter.DownloadAdapter;
 import com.e3lue.us.adapter.DownloadAdapter_1;
 import com.e3lue.us.callback.MyBackChickListener;
 import com.e3lue.us.http.HttpClient;
+import com.e3lue.us.http.Pingutil;
 import com.e3lue.us.model.FileShare;
 import com.e3lue.us.model.FileShares;
 import com.e3lue.us.model.HttpUrl;
@@ -38,10 +41,12 @@ import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 
+import org.json.JSONException;
 import org.wlf.filedownloader.DownloadFileInfo;
 import org.wlf.filedownloader.FileDownloader;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -64,10 +69,10 @@ public class FileShareActivity extends SwipeBackActivity {
     @BindView(R.id.alldownoad)
     TextView alldownoad;
     private DownloadAdapter_1 adapter;
-    List<FileShare> filelists;
     List<FileShares> fileRes;
     MyBackChickListener listener;
-    Boolean isback = true;
+    Boolean isback = false;
+    String msg;
     public static final String ACTION = "com.e3lue.us.activity.FileShareActivity";
     public Handler handler = new Handler() {
         @Override
@@ -92,6 +97,24 @@ public class FileShareActivity extends SwipeBackActivity {
                     return;
                 alldownoad.setText("全部下载");
                 alldownoad.setEnabled(true);
+            } else if (msg.what == 0x06) {
+                Boolean txt = (Boolean) msg.obj;
+                Calendar c = Calendar.getInstance();
+                int hour = c.get(Calendar.HOUR_OF_DAY);
+                int minute = c.get(Calendar.MINUTE);
+                if (txt) {
+                    alldownoad.setText("下载中");
+                    alldownoad.setEnabled(false);
+                    adapter.vh.downAllFile();
+                } else {
+                    if (hour > 20 || hour < 6) {
+                        alldownoad.setText("下载中");
+                        alldownoad.setEnabled(false);
+                        adapter.vh.downAllFile();
+                    } else {
+                        Toast.makeText(FileShareActivity.this, "请晚上9点后下载文件", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         }
     };
@@ -101,9 +124,6 @@ public class FileShareActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_share_activity);
         ButterKnife.bind(this);
-        if (!isNetworkAvailable()) {
-            isback = false;
-        }
         textHeadTitle.setText("文件共享资源");
         btnBack.setVisibility(View.VISIBLE);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -115,17 +135,20 @@ public class FileShareActivity extends SwipeBackActivity {
         alldownoad.setText("等待加载完成");
         alldownoad.setEnabled(false);
         directory.setText("目录>");
-        filelists = new ArrayList<>();
         fileRes = new ArrayList<>();
         adapter = new DownloadAdapter_1(FileShareActivity.this);
         alldownoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isNetworkAvailable())
+                if (!isNetworkAvailable()) {
+                    isback = false;
                     return;
-                alldownoad.setText("下载中");
-                alldownoad.setEnabled(false);
-                adapter.vh.downAllFile();
+                }
+                Calendar c = Calendar.getInstance();
+                int hour = c.get(Calendar.HOUR_OF_DAY);
+                int minute = c.get(Calendar.MINUTE);
+                Log.i("xinxi", hour + ":  " + minute);
+                Pingutil.ping("192.168.8.8", 2, FileShareActivity.this);
             }
         });
 //        getData(HttpUrl.Url.FileShareList);
@@ -162,19 +185,21 @@ public class FileShareActivity extends SwipeBackActivity {
                     @Override
                     public void onSuccess(Response<String> response) {
                         progressDimss();
-                        JsonResult r = HttpClient.GetResult(response.body());
-                        if (r.getRet() == 0 && r.getData() != null) {
-//                            List<FileShare> list
-
-                            if (URL.equals(HttpUrl.Url.FileShareList)) {
-                                filelists = JSONArray.parseArray(r.getData().toString(), FileShare.class);
-//                                adapter.setFilelists(filelists);
-                            } else {
+                        if (HttpUrl.Url.FileShareAllow.equals(URL)) {
+                            msg = response.body().toString();
+                            if (msg.contains("true")) {
+                                Log.i("xinxi", response.body().toString());
+                            }
+                        } else {
+                            JsonResult r = HttpClient.GetResult(response.body());
+                            if (r.getRet() == 0 && r.getData() != null) {
                                 Log.i("xinxi", r.getData().toString());
+                                isback = true;
                                 fileRes = JSONArray.parseArray(r.getData().toString(), FileShares.class);
                                 adapter.setFileRess(fileRes, 0);
                             }
                         }
+
                     }
 
                     @Override
@@ -200,8 +225,11 @@ public class FileShareActivity extends SwipeBackActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (isback) {
+                if (fileRes.size() <= 0) {
+                    finish();
+                }
                 listener.onBackChick();
-            }else {
+            } else {
                 finish();
             }
         }

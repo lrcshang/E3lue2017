@@ -33,12 +33,15 @@ import com.baidu.mapapi.utils.route.BaiduMapRoutePlan;
 import com.baidu.mapapi.utils.route.RouteParaOption;
 import com.e3lue.us.R;
 import com.e3lue.us.http.HttpClient;
+import com.e3lue.us.model.BaseUser;
 import com.e3lue.us.model.HttpUrl;
 import com.e3lue.us.model.JsonResult;
 import com.e3lue.us.service.HeartService;
 import com.e3lue.us.service.UploadService;
 import com.e3lue.us.ui.swipebacklayout.SwipeBackActivity;
 import com.e3lue.us.ui.view.NumberProgressBar;
+import com.e3lue.us.utils.SharedPreferences;
+import com.google.gson.Gson;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
@@ -221,6 +224,8 @@ public class CheckInNewActivity extends SwipeBackActivity {
     public void submitcheckin() {
         showProgress();
         tackpicture.setEnabled(false);
+        Gson gson = new Gson();
+        BaseUser user = gson.fromJson(SharedPreferences.getInstance().getString("BaseUser", ""), BaseUser.class);
         OkGo.<String>post(HttpUrl.Url.CHECKINSAVE)
                 .params("Province", province)
                 .params("City", city)
@@ -229,6 +234,7 @@ public class CheckInNewActivity extends SwipeBackActivity {
                 .params("Longitude", longitude)
                 .params("Latitude", latitude)
                 .params("Picture", "")
+                .params("UserID",user.getUserId())
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {

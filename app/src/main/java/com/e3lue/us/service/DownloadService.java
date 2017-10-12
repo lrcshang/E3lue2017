@@ -22,6 +22,7 @@ import org.wlf.filedownloader.listener.OnDeleteDownloadFileListener;
 import org.wlf.filedownloader.listener.OnRetryableFileDownloadStatusListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -339,6 +340,14 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         }
         if (!isNetworkAvailable())
             return;
+        Calendar c = Calendar.getInstance();
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+        if (hour > 20 || hour < 6) {
+        } else {
+            Toast.makeText(DownloadService.this, "请晚上9点后下载文件", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (mDownloadFileInfos.size() <= 0) {
             initDownloadFileInfos();
         }

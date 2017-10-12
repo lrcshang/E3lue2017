@@ -217,7 +217,7 @@ public class MainActivity extends BaseFragmentActivity {
                 this, AlertView.Style.Alert, new OnItemClickListener() {
             public void onItemClick(Object o, int position) {
                 if (position > -1) {
-                    DownloadAppUtils.downloadForAutoInstall(MainActivity.this, url, "E3lue", "E3lue Update");
+                    DownloadAppUtils.downloadForAutoInstall(MainActivity.this, url, "E3lue.apk", "E3lue Update");
                 }
             }
         }).show();

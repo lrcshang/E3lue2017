@@ -8,6 +8,8 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.e3lue.us.http.Pingutil;
+
 import org.wlf.filedownloader.FileDownloader;
 
 /**

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.e3lue.us"
-    android:versionCode="7"
-    android:versionName="0.07">
+    android:versionCode="10"
+    android:versionName="0.010">
 
     <!-- Required -->
     <permission
@@ -66,6 +66,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
+        android:resizeableActivity="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="BUGLY_APP_VERSION"
