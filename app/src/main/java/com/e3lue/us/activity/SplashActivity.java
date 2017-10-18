@@ -19,6 +19,7 @@ import com.e3lue.us.model.JsonResult;
 import com.e3lue.us.ui.UIHelper;
 import com.e3lue.us.ui.viewpagerindicator.CirclePageIndicator;
 import com.e3lue.us.utils.SharedPreferences;
+import com.e3lue.us.utils.Utils;
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
@@ -145,6 +146,7 @@ public class SplashActivity extends FragmentActivity {
                 .params("txtUserPWD", pw)
                 .params("txtUserIP", "")
                 .params("txtMac", "")
+                .params("Version", "" + Utils.getAPPLocalVersion(this))
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {

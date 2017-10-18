@@ -39,7 +39,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static android.R.attr.path;
 import static android.app.Activity.RESULT_OK;
 
 public class MemberFragment extends Fragment implements View.OnClickListener {

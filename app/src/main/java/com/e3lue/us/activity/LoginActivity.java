@@ -12,6 +12,7 @@ import com.e3lue.us.model.JsonResult;
 import com.e3lue.us.ui.UIHelper;
 import com.e3lue.us.ui.swipebacklayout.SwipeBackActivity;
 import com.e3lue.us.utils.SharedPreferences;
+import com.e3lue.us.utils.Utils;
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
@@ -54,6 +55,7 @@ public class LoginActivity extends SwipeBackActivity {
         params.put("txtUserPWD", pw);
         params.put("txtUserIP", "");
         params.put("txtMac", "");
+        params.put("Version", ""+ Utils.getAPPLocalVersion(this));
 
         OkGo.<String>post(HttpUrl.Url.LOGIN)
                 .params(params)

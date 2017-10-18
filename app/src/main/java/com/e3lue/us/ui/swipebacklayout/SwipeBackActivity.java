@@ -2,7 +2,6 @@
 package com.e3lue.us.ui.swipebacklayout;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
