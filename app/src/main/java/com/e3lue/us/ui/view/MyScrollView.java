@@ -12,6 +12,7 @@ import android.widget.ScrollView;
  * ScrollView的滚动Y值进行监�?
  */
 public class MyScrollView extends ScrollView {
+
 	private OnScrollListener onScrollListener;  
     /** 
      * 主要是用在用户手指离�?MyScrollView，MyScrollView还在继续滑动，我们用来保存Y的距离，然后做比�? 

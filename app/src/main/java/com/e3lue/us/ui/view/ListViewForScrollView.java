@@ -4,7 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ListView;
 
-public class ListViewForScrollView extends ListView {  
+public class ListViewForScrollView extends ListView {
+
     public ListViewForScrollView(Context context) {  
         super(context);  
     }  
