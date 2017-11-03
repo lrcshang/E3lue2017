@@ -343,11 +343,11 @@ public class DownloadService extends Service implements OnRetryableFileDownloadS
         Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
-        if (hour > 20 || hour < 6) {
-        } else {
-            Toast.makeText(DownloadService.this, "请晚上9点后下载文件", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (hour > 20 || hour < 6) {
+//        } else {
+//            Toast.makeText(DownloadService.this, "请晚上9点后下载文件", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         if (mDownloadFileInfos.size() <= 0) {
             initDownloadFileInfos();
         }
