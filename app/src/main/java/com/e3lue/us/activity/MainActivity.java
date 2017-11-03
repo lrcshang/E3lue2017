@@ -57,6 +57,13 @@ public class MainActivity extends BaseFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
+      TextView  textHeadTitle= (TextView) findViewById(R.id.textHeadTitle);
+        textHeadTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity( new Intent(MainActivity.this,TripActivity.class));
+            }
+        });
         initData(savedInstanceState);
         Bugly.init(getApplicationContext(), "5c986dcc37", false);//Tencent
         initView();
