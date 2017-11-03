@@ -19,6 +19,8 @@ public class TripData {
      Fee2 差补 int
      Fee3 招待 int
      Note 招待说明 String*/
+    public TripData() {
+    }
 
     public int getUserID() {
         return UserID;
@@ -75,6 +77,7 @@ public class TripData {
     public String getNote() {
         return Note;
     }
+
     int UserID;
     String UserName;
 
