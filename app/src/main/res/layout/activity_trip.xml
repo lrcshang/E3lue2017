@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    tools:context="com.e3lue.us.activity.TripActivity">
+
+    <include layout="@layout/layout_main_header" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/selectDate"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="选择日期："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/currentDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingStart="@dimen/space_10"
+                    android:text="111"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="出发城市："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/Locale"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="访问公司："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/CompanyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="接洽对象："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/ContactPerson"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="出发地点："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/Departs"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/selectLocale"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="到达地点："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/Destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="交通方式："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/Transport"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="工作内容："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="交通："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/fee1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:inputType="number"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="16dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:text="差补："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/fee2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="招待："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/fee3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:inputType="number"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/space_10"
+                android:background="@color/color2"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:text="招待说明："
+                    android:textColor="@color/color4"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/note"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="@dimen/space_10"
+                    android:textColor="@color/color5"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@null"></View>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
