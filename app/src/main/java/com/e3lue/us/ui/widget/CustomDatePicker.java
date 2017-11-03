@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.e3lue.us.R;
@@ -64,7 +65,6 @@ public class CustomDatePicker {
     private boolean spanYear, spanMon, spanDay, spanHour, spanMin;
     private Calendar selectedCalender, startCalendar, endCalendar;
     private TextView tv_cancle, tv_select, hour_text, minute_text;
-
     public CustomDatePicker(Context context, ResultHandler resultHandler, String startDate, String endDate) {
         if (isValidDate(startDate, "yyyy-MM-dd HH:mm") && isValidDate(endDate, "yyyy-MM-dd HH:mm")) {
             canAccess = true;
@@ -88,7 +88,7 @@ public class CustomDatePicker {
     private void initDialog() {
         if (datePickerDialog == null) {
             datePickerDialog = new Dialog(context, R.style.time_dialog);
-            datePickerDialog.setCancelable(false);
+//            datePickerDialog.setCancelable(false);
             datePickerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             datePickerDialog.setContentView(R.layout.custom_date_picker);
             Window window = datePickerDialog.getWindow();
@@ -122,7 +122,6 @@ public class CustomDatePicker {
         tv_select = (TextView) datePickerDialog.findViewById(R.id.tv_select);
         hour_text = (TextView) datePickerDialog.findViewById(R.id.hour_text);
         minute_text = (TextView) datePickerDialog.findViewById(R.id.minute_text);
-
         tv_cancle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

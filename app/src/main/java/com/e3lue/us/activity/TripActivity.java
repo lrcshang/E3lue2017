@@ -14,7 +14,10 @@ import com.e3lue.us.model.TripData;
 import com.e3lue.us.ui.swipebacklayout.SwipeBackActivity;
 import com.e3lue.us.ui.widget.CustomDatePicker;
 
+import org.wlf.filedownloader.base.Log;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -62,13 +65,15 @@ public class TripActivity extends SwipeBackActivity implements View.OnClickListe
     @BindView(R.id.note)
     EditText note;
     private CustomDatePicker customDatePicker1;
-    List<TripData> tripDatas;
-
+    List<TripData> tripDatas;//出差需要提交参数数组
+TripData tripData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip);
         ButterKnife.bind(this);
+        tripDatas=new ArrayList<>();
+        tripData=new TripData();
         selectDate.setOnClickListener(this);
         initDatePicker();
     }
@@ -79,6 +84,8 @@ public class TripActivity extends SwipeBackActivity implements View.OnClickListe
             case R.id.selectDate:
                 // 日期格式为yyyy-MM-dd
                 customDatePicker1.show(currentDate.getText().toString());
+                tripData.setPlanDate(currentDate.getText().toString());
+                Log.i("xinxi",currentDate.getText().toString());
                 break;
         }
     }
@@ -92,6 +99,8 @@ public class TripActivity extends SwipeBackActivity implements View.OnClickListe
             @Override
             public void handle(String time) { // 回调接口，获得选中的时间
                 currentDate.setText(time.split(" ")[0]);
+                tripData.setPlanDate(time.split(" ")[0].toString());
+                Log.i("xinxi",time.split(" ")[0].toString());
             }
         }, "2010-01-01 00:00", now); // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
         customDatePicker1.showSpecificTime(false); // 不显示时和分
