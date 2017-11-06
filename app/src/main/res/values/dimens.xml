@@ -84,4 +84,5 @@
 
 	<!--PopMenu-->
 	<dimen name="more_window_item_margin">12dp</dimen>
+	<dimen name="trip_layout_height">50dp</dimen>
 </resources>

@@ -150,7 +150,7 @@ public class TripActivity extends SwipeBackActivity implements View.OnClickListe
             case R.id.check_text:
                 arr_data.add("sss");
                 arr_adapter.notifyDataSetChanged();
-                searchLayoutTop = listView.getBottom()+125;
+                searchLayoutTop = listView.getBottom()+getResources().getDimensionPixelOffset(R.dimen.trip_layout_height);
                 if (hView.getParent() != search02) {
                     search01.removeView(hView);
                     search02.addView(hView);
@@ -180,7 +180,7 @@ public class TripActivity extends SwipeBackActivity implements View.OnClickListe
     public void onViewClicked() {
         arr_data.add("sss");
         arr_adapter.notifyDataSetChanged();
-        searchLayoutTop = listView.getBottom()+125;
+        searchLayoutTop = listView.getBottom()+getResources().getDimensionPixelOffset(R.dimen.trip_layout_height);
         if (hView.getParent() != search02) {
             search01.removeView(hView);
             search02.addView(hView);
